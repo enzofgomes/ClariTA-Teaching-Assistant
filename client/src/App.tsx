@@ -11,11 +11,6 @@ import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 
-// Wrapper component for AuthForm to work with wouter
-function AuthFormWrapper() {
-  return <AuthForm />;
-}
-
 function Router() {
   const { user, loading } = useAuth();
 
@@ -29,12 +24,11 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={LandingPage} />
       {!user ? (
-        <Route path="/login" component={AuthFormWrapper} />
+        <Route path="/" component={AuthForm} />
       ) : (
         <>
-          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/" component={Dashboard} />
           <Route path="/upload" component={UploadPage} />
           <Route path="/quiz/:quizId" component={QuizPage} />
         </>
