@@ -7,7 +7,7 @@ import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import AuthForm from "@/components/AuthForm";
 import UploadPage from "@/pages/UploadPage";
 import QuizPage from "@/pages/QuizPage";
-import LandingPage from "@/pages/LandingPage";
+import HomePage from "@/pages/HomePage";
 import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 
@@ -24,11 +24,12 @@ function Router() {
 
   return (
     <Switch>
+      <Route path="/" component={HomePage} />
       {!isAuthenticated ? (
-        <Route path="/" component={AuthForm} />
+        <Route path="/login" component={AuthForm} />
       ) : (
         <>
-          <Route path="/" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/upload" component={UploadPage} />
           <Route path="/quiz/:quizId" component={QuizPage} />
         </>
