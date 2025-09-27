@@ -30,8 +30,8 @@ export function useSupabaseAuth() {
   const { data: user, isLoading, error, refetch } = useQuery<User | null>({
     queryKey: ["/api/auth/user"],
     retry: false,
-    staleTime: 0, // Always check for fresh auth state
-    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes to reduce refetches
+    refetchOnWindowFocus: false, // Don't refetch on window focus to prevent flicker
     queryFn: async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();

@@ -8,15 +8,20 @@ const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
   throw new Error("Missing Supabase environment variables");
 }
 
-// Client for frontend operations
+// Client for frontend operations (uses anon key)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Admin client for server operations
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+// Admin client for backend operations (uses service role key)
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
@@ -37,8 +42,8 @@ async function upsertUser(user: any) {
     await storage.upsertUser({
       id: user.id,
       email: user.email || '',
-      firstName: user.user_metadata?.first_name || '',
-      lastName: user.user_metadata?.last_name || '',
+      fullName: user.user_metadata?.full_name || '',
+      role: user.user_metadata?.role || 'user',
       profileImageUrl: user.user_metadata?.avatar_url || '',
     });
   } catch (error) {
@@ -52,18 +57,17 @@ export async function setupAuth(app: Express) {
   app.use(getSession());
 
   // Auth routes
-  app.get("/api/auth/signup", async (req, res) => {
+  app.post("/api/auth/signup", async (req, res) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password, fullName, role = 'user' } = req.body;
       
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-          }
+        email_confirm: true, // Auto-confirm email
+        user_metadata: {
+          full_name: fullName,
+          role: role,
         }
       });
 
