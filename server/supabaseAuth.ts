@@ -37,13 +37,12 @@ export function getSession() {
   });
 }
 
-async function upsertUser(user: { id: string; email: string; user_metadata?: { full_name?: string; avatar_url?: string } }) {
+async function upsertUser(user: { id: string; email?: string; user_metadata?: { full_name?: string; avatar_url?: string } }) {
   try {
     await storage.upsertUser({
       id: user.id,
       email: user.email || '',
       fullName: user.user_metadata?.full_name || '',
-      role: user.user_metadata?.role || 'user',
       profileImageUrl: user.user_metadata?.avatar_url || '',
     });
   } catch (error) {
@@ -59,7 +58,7 @@ export async function setupAuth(app: Express) {
   // Auth routes
   app.post("/api/auth/signup", async (req, res) => {
     try {
-      const { email, password, fullName, role = 'user' } = req.body;
+      const { email, password, fullName } = req.body;
       
       const { data, error } = await supabaseAdmin.auth.admin.createUser({
         email,
@@ -67,7 +66,6 @@ export async function setupAuth(app: Express) {
         email_confirm: true, // Auto-confirm email
         user_metadata: {
           full_name: fullName,
-          role: role,
         }
       });
 
@@ -75,9 +73,14 @@ export async function setupAuth(app: Express) {
         return res.status(400).json({ error: error.message });
       }
 
+      if (data.user) {
+        // Create user in our database
+        await upsertUser(data.user);
+      }
+
       // Store user session
-      req.session.userId = data.user?.id;
-      req.session.user = data.user;
+      (req.session as any).userId = data.user?.id;
+      (req.session as any).user = data.user;
 
       res.json({ user: data.user });
     } catch (error) {
@@ -100,10 +103,6 @@ export async function setupAuth(app: Express) {
       }
 
       if (data.user) {
-        // Store user session
-        req.session.userId = data.user.id;
-        req.session.user = data.user;
-        
         // Ensure user exists in our users table
         await upsertUser(data.user);
       }
