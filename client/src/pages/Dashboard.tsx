@@ -1,4 +1,4 @@
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ interface Quiz {
 }
 
 export default function Dashboard() {
-  const { user, isLoading, signOut } = useSupabaseAuth();
+  const { user, loading: isLoading, signOut } = useAuth();
   const { toast } = useToast();
 
   const { data: uploads, isLoading: uploadsLoading } = useQuery<Upload[]>({
@@ -76,9 +76,7 @@ export default function Dashboard() {
                 <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                   <User className="h-4 w-4" />
                   <span data-testid="text-user-name">
-                    {user.firstName && user.lastName 
-                      ? `${user.firstName} ${user.lastName}` 
-                      : user.email || 'User'}
+                    {user.fullName || user.email || 'User'}
                   </span>
                 </div>
               )}

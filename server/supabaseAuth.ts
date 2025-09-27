@@ -137,55 +137,8 @@ export async function setupAuth(app: Express) {
     }
   });
 
-  // Middleware to verify JWT tokens
-  app.use('/api', async (req, res, next) => {
-    // Skip auth for auth endpoints and static files
-    if (req.path.startsWith('/auth/') || req.path === '/health') {
-      return next();
-    }
-
-    try {
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        const token = authHeader.substring(7);
-        
-        // Verify the JWT token with Supabase
-        const { data: { user }, error } = await supabase.auth.getUser(token);
-        
-        if (error || !user) {
-          return res.status(401).json({ message: "Invalid token" });
-        }
-
-        // Ensure user exists in our database
-        await upsertUser(user);
-
-        // Add user to request object
-        req.user = user;
-        return next();
-      }
-
-      // Check session-based auth
-      if (req.session.userId) {
-        const { data: { user }, error } = await supabaseAdmin.auth.admin.getUserById(req.session.userId);
-        
-        if (error || !user) {
-          req.session.destroy(() => {});
-          return res.status(401).json({ message: "Invalid session" });
-        }
-
-        // Ensure user exists in our database
-        await upsertUser(user);
-
-        req.user = user;
-        return next();
-      }
-
-      return res.status(401).json({ message: "No authentication provided" });
-    } catch (error) {
-      console.error('Auth middleware error:', error);
-      return res.status(500).json({ message: "Authentication error" });
-    }
-  });
+  // Note: Authentication middleware is now handled by the dedicated auth middleware
+  // in middleware/auth.ts to avoid conflicts and ensure consistent token validation
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {

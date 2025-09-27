@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
+import { authenticatedFetch } from "../lib/api";
 import type { User } from "@shared/schema";
 import { useEffect } from "react";
 
@@ -48,13 +49,8 @@ export function useSupabaseAuth() {
 
         console.log('Session found for user:', session.user.email);
 
-        // Make API call with the session token
-        const response = await fetch("/api/auth/user", {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        // Make API call with authenticated fetch
+        const response = await authenticatedFetch("/api/auth/user");
         
         if (response.status === 401) {
           console.log('API returned 401, user not in database yet');

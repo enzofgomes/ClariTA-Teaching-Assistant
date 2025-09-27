@@ -8,7 +8,6 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey(), // Use Supabase auth user ID
   email: varchar("email", { length: 255 }).notNull().unique(),
   fullName: varchar("full_name", { length: 255 }),
-  role: varchar("role", { length: 50 }).notNull().default("user"), // 'user' or 'admin'
   profileImageUrl: varchar("profile_image_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -83,5 +82,4 @@ export interface AuthUser {
   id: string;
   email: string;
   fullName?: string;
-  role: string;
 }
