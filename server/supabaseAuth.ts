@@ -32,15 +32,8 @@ export function getSession() {
   });
 }
 
-async function upsertUser(userData: any) {
-  const { data: { user }, error } = await supabaseAdmin.auth.admin.getUserById(userData.id);
-  
-  if (error && error.message !== 'User not found') {
-    throw error;
-  }
-
-  // If user exists in auth but not in our users table, create them
-  if (user && !error) {
+async function upsertUser(user: any) {
+  try {
     await storage.upsertUser({
       id: user.id,
       email: user.email || '',
@@ -48,6 +41,9 @@ async function upsertUser(userData: any) {
       lastName: user.user_metadata?.last_name || '',
       profileImageUrl: user.user_metadata?.avatar_url || '',
     });
+  } catch (error) {
+    console.error('Error upserting user:', error);
+    // Don't throw the error, just log it to avoid breaking the auth flow
   }
 }
 
@@ -156,6 +152,9 @@ export async function setupAuth(app: Express) {
           return res.status(401).json({ message: "Invalid token" });
         }
 
+        // Ensure user exists in our database
+        await upsertUser(user);
+
         // Add user to request object
         req.user = user;
         return next();
@@ -169,6 +168,9 @@ export async function setupAuth(app: Express) {
           req.session.destroy(() => {});
           return res.status(401).json({ message: "Invalid session" });
         }
+
+        // Ensure user exists in our database
+        await upsertUser(user);
 
         req.user = user;
         return next();
