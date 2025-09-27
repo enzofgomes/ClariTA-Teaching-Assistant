@@ -106,8 +106,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
+      const url = `${API_URL}/auth/signup`;
       
-      const response = await fetch(`${API_URL}/auth/signup`, {
+      console.log('Signup request to:', url);
+      console.log('Request body:', { email, password, fullName });
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,11 +123,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }),
       });
 
+      console.log('Signup response status:', response.status);
+      console.log('Signup response ok:', response.ok);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('Signup error data:', errorData);
         return { error: new Error(errorData.error || 'Registration failed') };
       }
 
+      const responseData = await response.json();
+      console.log('Signup success data:', responseData);
+      
+      // After successful signup, automatically sign in the user
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        console.log('Auto sign-in after signup failed:', signInError);
+        // Don't return error - account was created successfully
+        // User can manually sign in
+      }
+      
       return { error: null };
     } catch (error) {
       console.error('Registration error:', error);
