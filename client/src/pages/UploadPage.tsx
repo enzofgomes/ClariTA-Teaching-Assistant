@@ -6,28 +6,43 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedFetch } from "@/lib/api";
 import { Uploader } from "@/components/Uploader";
-import { GraduationCap, Moon, Brain, FileText, Scale, FileCheck } from "lucide-react";
+import { QuizConfig, type QuizConfig as QuizConfigType } from "@/components/QuizConfig";
+import { GraduationCap, Moon, Brain, FileText, Scale, FileCheck, ArrowLeft } from "lucide-react";
 import type { Upload } from "@/types/quiz";
 
 export default function UploadPage() {
   const [, setLocation] = useLocation();
   const [uploadResult, setUploadResult] = useState<Upload | null>(null);
+  const [showConfig, setShowConfig] = useState(false);
   const { toast } = useToast();
 
   const generateQuizMutation = useMutation({
-    mutationFn: async (uploadId: string) => {
+    mutationFn: async ({ uploadId, config }: { uploadId: string; config: QuizConfigType }) => {
+      const requestBody = { 
+        uploadId, 
+        numQuestions: config.numQuestions,
+        questionTypes: config.questionTypes
+      };
+      
+      console.log('Sending quiz generation request:', requestBody);
+      
       const response = await authenticatedFetch("/api/quizzes", {
         method: "POST",
-        body: JSON.stringify({ uploadId, numQuestions: 10 }),
+        body: JSON.stringify(requestBody),
       });
       return response.json();
     },
     onSuccess: (data) => {
-      toast({
-        title: "Quiz Generated!",
-        description: `Successfully created ${data.questions.length} questions.`,
-      });
-      setLocation(`/quiz/${data.quizId}`);
+      console.log('Quiz generation response:', data);
+      if (data && data.questions && Array.isArray(data.questions)) {
+        toast({
+          title: "Quiz Generated!",
+          description: `Successfully created ${data.questions.length} questions.`,
+        });
+        setLocation(`/quiz/${data.quizId}`);
+      } else {
+        throw new Error('Invalid response format from server');
+      }
     },
     onError: (error) => {
       toast({
@@ -40,16 +55,22 @@ export default function UploadPage() {
 
   const handleUploadSuccess = (upload: Upload) => {
     setUploadResult(upload);
+    setShowConfig(true);
     toast({
       title: "Upload Successful",
       description: `Processed ${upload.pageCount} pages from ${upload.fileName}`,
     });
   };
 
-  const handleGenerateQuiz = () => {
+  const handleConfigSubmit = (config: QuizConfigType) => {
     if (uploadResult) {
-      generateQuizMutation.mutate(uploadResult.uploadId);
+      generateQuizMutation.mutate({ uploadId: uploadResult.uploadId, config });
     }
+  };
+
+  const handleBackToUpload = () => {
+    setShowConfig(false);
+    setUploadResult(null);
   };
 
   return (
@@ -75,76 +96,102 @@ export default function UploadPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Upload Section */}
-        <div className="mb-8">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-foreground mb-2">
-              Upload Lecture Slides
-            </h2>
-            <p className="text-muted-foreground">
-              Upload a PDF of your lecture slides to generate an instant quiz
-            </p>
-          </div>
-
-          <Uploader onUploadSuccess={handleUploadSuccess} />
-
-          {/* Upload Results */}
-          {uploadResult && (
-            <div className="mt-6 fade-in">
-              <Card className="p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-foreground">Upload Successful</h3>
-                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                    <FileCheck className="w-3 h-3 inline mr-1" />
-                    Complete
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <FileText className="text-red-500" />
-                    <div>
-                      <p className="text-sm font-medium" data-testid="text-filename">
-                        {uploadResult.fileName}
-                      </p>
-                      <p className="text-xs text-muted-foreground">File name</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Scale className="text-blue-500" />
-                    <div>
-                      <p className="text-sm font-medium" data-testid="text-filesize">
-                        {(uploadResult.fileSize / (1024 * 1024)).toFixed(1)} MB
-                      </p>
-                      <p className="text-xs text-muted-foreground">File size</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <FileText className="text-green-500" />
-                    <div>
-                      <p className="text-sm font-medium" data-testid="text-pagecount">
-                        {uploadResult.pageCount} pages
-                      </p>
-                      <p className="text-xs text-muted-foreground">Page count</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <Button 
-                  onClick={handleGenerateQuiz}
-                  disabled={generateQuizMutation.isPending}
-                  className="w-full"
-                  data-testid="button-generate-quiz"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  {generateQuizMutation.isPending ? "Generating..." : "Generate 10-Question Quiz"}
-                </Button>
-              </Card>
+        {!showConfig ? (
+          /* Upload Section */
+          <div className="mb-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold text-foreground mb-2">
+                Upload Lecture Slides
+              </h2>
+              <p className="text-muted-foreground">
+                Upload a PDF of your lecture slides to generate an instant quiz
+              </p>
             </div>
-          )}
-        </div>
+
+            <Uploader onUploadSuccess={handleUploadSuccess} />
+
+            {/* Upload Results */}
+            {uploadResult && (
+              <div className="mt-6 fade-in">
+                <Card className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-medium text-foreground">Upload Successful</h3>
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      <FileCheck className="w-3 h-3 inline mr-1" />
+                      Complete
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <FileText className="text-red-500" />
+                      <div>
+                        <p className="text-sm font-medium" data-testid="text-filename">
+                          {uploadResult.fileName}
+                        </p>
+                        <p className="text-xs text-muted-foreground">File name</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Scale className="text-blue-500" />
+                      <div>
+                        <p className="text-sm font-medium" data-testid="text-filesize">
+                          {(uploadResult.fileSize / (1024 * 1024)).toFixed(1)} MB
+                        </p>
+                        <p className="text-xs text-muted-foreground">File size</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <FileText className="text-green-500" />
+                      <div>
+                        <p className="text-sm font-medium" data-testid="text-pagecount">
+                          {uploadResult.pageCount} pages
+                        </p>
+                        <p className="text-xs text-muted-foreground">Page count</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => setShowConfig(true)}
+                    className="w-full"
+                    data-testid="button-configure-quiz"
+                  >
+                    <Brain className="mr-2 h-4 w-4" />
+                    Configure Quiz
+                  </Button>
+                </Card>
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Quiz Configuration Section */
+          <div className="mb-8">
+            <div className="text-center mb-6">
+              <Button
+                variant="ghost"
+                onClick={handleBackToUpload}
+                className="mb-4"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Upload
+              </Button>
+              <h2 className="text-2xl font-semibold text-foreground mb-2">
+                Quiz Configuration
+              </h2>
+              <p className="text-muted-foreground">
+                Customize your quiz with the number of questions and types you want
+              </p>
+            </div>
+
+            <QuizConfig 
+              onConfigSubmit={handleConfigSubmit}
+              isGenerating={generateQuizMutation.isPending}
+            />
+          </div>
+        )}
 
         {/* Loading State */}
         {generateQuizMutation.isPending && (
