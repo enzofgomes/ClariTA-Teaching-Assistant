@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLocation, Redirect } from 'wouter';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -23,7 +24,21 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, loading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // Redirect to dashboard if already authenticated
+  if (user) {
+    return <Redirect to="/dashboard" />;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +57,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
           setError(error.message || 'Sign up failed');
         } else {
           onSuccess?.();
+          setLocation('/dashboard');
         }
       } else {
         const { error } = await signIn(formData.email, formData.password);
@@ -50,6 +66,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
           setError(error.message || 'Sign in failed');
         } else {
           onSuccess?.();
+          setLocation('/dashboard');
         }
       }
     } catch (err) {
@@ -63,142 +80,37 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Force background to stay by adding classes to body and html
+  // Simple background styling
   useEffect(() => {
-    document.body.classList.add('auth-form-page');
-    document.documentElement.classList.add('auth-form-page');
-    
-    // Force background every 100ms to prevent any override
-    const forceBackground = () => {
-      const body = document.body;
-      const html = document.documentElement;
-      const container = document.querySelector('.auth-form-container');
-      
-      if (body) {
-        body.style.background = 'linear-gradient(to bottom right, rgb(239 246 255), rgb(238 242 255), rgb(221 214 254))';
-        body.style.backgroundAttachment = 'fixed';
-        body.style.backgroundSize = 'cover';
-        body.style.backgroundRepeat = 'no-repeat';
-      }
-      
-      if (html) {
-        html.style.background = 'linear-gradient(to bottom right, rgb(239 246 255), rgb(238 242 255), rgb(221 214 254))';
-        html.style.backgroundAttachment = 'fixed';
-        html.style.backgroundSize = 'cover';
-        html.style.backgroundRepeat = 'no-repeat';
-      }
-      
-      if (container && container instanceof HTMLElement) {
-        container.style.background = 'linear-gradient(to bottom right, rgb(239 246 255), rgb(238 242 255), rgb(221 214 254))';
-        container.style.backgroundAttachment = 'fixed';
-        container.style.backgroundSize = 'cover';
-        container.style.backgroundRepeat = 'no-repeat';
-      }
-
-      // Force logo styling to stay consistent
-      const logoContainer = document.querySelector('.w-12.h-12.rounded-xl');
-      const logoText = document.querySelector('h1');
-      const sparkleContainer = document.querySelector('.absolute.-top-1.-right-1');
-      
-      if (logoContainer && logoContainer instanceof HTMLElement) {
-        logoContainer.style.background = 'linear-gradient(to bottom right, rgb(37 99 235), rgb(147 51 234))';
-        logoContainer.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-      }
-      
-      if (logoText && logoText instanceof HTMLElement) {
-        logoText.style.background = 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))';
-        logoText.style.webkitBackgroundClip = 'text';
-        logoText.style.webkitTextFillColor = 'transparent';
-        logoText.style.backgroundClip = 'text';
-      }
-      
-      if (sparkleContainer && sparkleContainer instanceof HTMLElement) {
-        sparkleContainer.style.background = 'linear-gradient(to bottom right, rgb(251 191 36), rgb(249 115 22))';
-      }
-
-      // Force button styling to stay consistent
-      const buttons = document.querySelectorAll('button[type="submit"]');
-      buttons.forEach(button => {
-        if (button instanceof HTMLButtonElement && !button.disabled) {
-          button.style.background = 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))';
-          button.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-          button.style.color = 'white';
-        }
-      });
-    };
-    
-    // Force immediately
-    forceBackground();
-    
-    // Force every 100ms
-    const interval = setInterval(forceBackground, 100);
+    document.body.style.background = 'linear-gradient(to bottom right, rgb(239 246 255), rgb(238 242 255), rgb(221 214 254))';
+    document.body.style.backgroundAttachment = 'fixed';
     
     return () => {
-      clearInterval(interval);
-      document.body.classList.remove('auth-form-page');
-      document.documentElement.classList.remove('auth-form-page');
-      // Reset styles
       document.body.style.background = '';
-      document.documentElement.style.background = '';
+      document.body.style.backgroundAttachment = '';
     };
   }, []);
 
   return (
-    <div 
-      className="auth-form-container min-h-screen fixed inset-0 overflow-y-auto"
-      style={{
-        background: 'linear-gradient(to bottom right, rgb(239 246 255), rgb(238 242 255), rgb(221 214 254))',
-        backgroundAttachment: 'fixed',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="relative z-10">
         {/* Header */}
         <header className="w-full py-8">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-center space-x-3 mb-4">
               <div className="relative">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-                  style={{
-                    background: 'linear-gradient(to bottom right, rgb(37 99 235), rgb(147 51 234))',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-                  }}
-                >
-                  <Brain 
-                    className="h-7 w-7" 
-                    style={{ color: 'white' }}
-                  />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg">
+                  <Brain className="h-7 w-7 text-white" />
                 </div>
-                <div 
-                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(to bottom right, rgb(251 191 36), rgb(249 115 22))'
-                  }}
-                >
-                  <Sparkles 
-                    className="h-2.5 w-2.5" 
-                    style={{ color: 'white' }}
-                  />
+                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                  <Sparkles className="h-2.5 w-2.5 text-white" />
                 </div>
               </div>
               <div className="text-center">
-                <h1 
-                  className="text-3xl font-bold"
-                  style={{
-                    background: 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}
-                >
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   ClariTA
                 </h1>
-                <p 
-                  className="text-sm font-medium"
-                  style={{ color: 'rgb(75 85 99)' }}
-                >
+                <p className="text-sm font-medium text-gray-600">
                   Teaching Assistant
                 </p>
               </div>
@@ -272,20 +184,8 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                     )}
                     <Button 
                       type="submit" 
-                      className="w-full h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                      className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
                       disabled={isLoading}
-                      style={{
-                        background: 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(to right, rgb(29 78 216), rgb(126 34 206))';
-                        e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))';
-                        e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-                      }}
                     >
                       {isLoading ? (
                         <div className="flex items-center space-x-2">
@@ -350,20 +250,8 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                     )}
                     <Button 
                       type="submit" 
-                      className="w-full h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                      className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
                       disabled={isLoading}
-                      style={{
-                        background: 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(to right, rgb(29 78 216), rgb(126 34 206))';
-                        e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))';
-                        e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-                      }}
                     >
                       {isLoading ? (
                         <div className="flex items-center space-x-2">
