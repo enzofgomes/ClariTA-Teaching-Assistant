@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -17,48 +17,45 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    firstName: '',
-    lastName: '',
+    fullName: '',
   });
 
-  const {
-    signIn,
-    signUp,
-    isSigningIn,
-    isSigningUp,
-    signInError,
-    signUpError,
-  } = useSupabaseAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { signIn, signUp } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
     
-    if (isSignUp) {
-      signUp(
-        {
-          email: formData.email,
-          password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
+    try {
+      if (isSignUp) {
+        const { error } = await signUp(
+          formData.email,
+          formData.password,
+          formData.fullName
+        );
+        
+        if (error) {
+          setError(error.message || 'Sign up failed');
+        } else {
+          onSuccess?.();
         }
-      );
-    } else {
-      signIn(
-        {
-          email: formData.email,
-          password: formData.password,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
+      } else {
+        const { error } = await signIn(formData.email, formData.password);
+        
+        if (error) {
+          setError(error.message || 'Sign in failed');
+        } else {
+          onSuccess?.();
         }
-      );
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -266,17 +263,17 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         placeholder="Enter your password"
                       />
                     </div>
-                    {signInError && (
+                    {error && (
                       <Alert variant="destructive" className="border-red-200 bg-red-50 dark:bg-red-900/20">
                         <AlertDescription className="text-red-800 dark:text-red-200">
-                          {signInError.message}
+                          {error}
                         </AlertDescription>
                       </Alert>
                     )}
                     <Button 
                       type="submit" 
                       className="w-full h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
-                      disabled={isSigningIn}
+                      disabled={isLoading}
                       style={{
                         background: 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))',
                         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
@@ -290,7 +287,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
                       }}
                     >
-                      {isSigningIn ? (
+                      {isLoading ? (
                         <div className="flex items-center space-x-2">
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           <span>Signing In...</span>
@@ -318,31 +315,17 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         placeholder="Enter your email"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          First Name
-                        </Label>
-                        <Input
-                          id="firstName"
-                          value={formData.firstName}
-                          onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
-                          placeholder="First name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Last Name
-                        </Label>
-                        <Input
-                          id="lastName"
-                          value={formData.lastName}
-                          onChange={(e) => handleInputChange('lastName', e.target.value)}
-                          className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
-                          placeholder="Last name"
-                        />
-                      </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Full Name
+                      </Label>
+                      <Input
+                        id="fullName"
+                        value={formData.fullName}
+                        onChange={(e) => handleInputChange('fullName', e.target.value)}
+                        className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                        placeholder="Full name"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="signup-password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -358,17 +341,17 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         placeholder="Create a password"
                       />
                     </div>
-                    {signUpError && (
+                    {error && (
                       <Alert variant="destructive" className="border-red-200 bg-red-50 dark:bg-red-900/20">
                         <AlertDescription className="text-red-800 dark:text-red-200">
-                          {signUpError.message}
+                          {error}
                         </AlertDescription>
                       </Alert>
                     )}
                     <Button 
                       type="submit" 
                       className="w-full h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
-                      disabled={isSigningUp}
+                      disabled={isLoading}
                       style={{
                         background: 'linear-gradient(to right, rgb(37 99 235), rgb(147 51 234))',
                         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
@@ -382,7 +365,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
                       }}
                     >
-                      {isSigningUp ? (
+                      {isLoading ? (
                         <div className="flex items-center space-x-2">
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           <span>Creating Account...</span>
