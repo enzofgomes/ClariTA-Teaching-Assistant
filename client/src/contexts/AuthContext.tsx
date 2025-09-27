@@ -8,7 +8,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string, role?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -61,11 +61,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const fetchUserDetails = async (authUser: User) => {
     try {
       const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
-      const token = session?.access_token;
       
       const response = await fetch(`${API_URL}/auth/me`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${session?.access_token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -79,7 +78,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           id: authUser.id,
           email: authUser.email!,
           fullName: authUser.user_metadata?.full_name,
-          role: authUser.user_metadata?.role || 'user',
         });
       }
     } catch (error) {
@@ -89,7 +87,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         id: authUser.id,
         email: authUser.email!,
         fullName: authUser.user_metadata?.full_name,
-        role: authUser.user_metadata?.role || 'user',
       });
     } finally {
       setLoading(false);
@@ -104,7 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string, role = 'user') => {
+  const signUp = async (email: string, password: string, fullName: string) => {
     try {
       const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
       
@@ -117,7 +114,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email,
           password,
           fullName,
-          role,
         }),
       });
 
