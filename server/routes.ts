@@ -59,7 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user's uploads
   app.get('/api/user/uploads', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const uploads = await storage.getUserUploads(userId);
       res.json(uploads);
     } catch (error) {
@@ -71,7 +71,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user's quizzes
   app.get('/api/user/quizzes', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const quizzes = await storage.getUserQuizzes(userId);
       res.json(quizzes);
     } catch (error) {
@@ -91,7 +91,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const pdfResult = await parsePDF(req.file.buffer);
       
       // Create upload record
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const uploadData = {
         userId,
         fileName: req.file.originalname,
@@ -125,14 +125,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate quiz endpoint (protected)
   app.post('/api/quizzes', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
-      const { uploadId, numQuestions = 10 } = req.body;
+      const { uploadId, numQuestions = 10, questionTypes } = req.body;
+
+      console.log('Quiz generation request:', { uploadId, numQuestions, questionTypes });
 
       if (!uploadId) {
         return res.status(400).json({ error: 'uploadId is required' });
       }
 
       // Get user and upload data
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const upload = await storage.getUpload(uploadId);
       if (!upload) {
         return res.status(404).json({ error: 'Upload not found' });
@@ -146,7 +148,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate quiz using Gemini
       const quizResult = await generateQuiz({
         textByPage: upload.textByPage,
-        numQuestions
+        numQuestions,
+        questionTypes: questionTypes || {
+          mcq: true,
+          tf: true,
+          fill: true
+        }
       }, uploadId);
 
       // Save quiz to database
@@ -160,6 +167,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedQuiz = insertQuizSchema.parse(quizData);
       const quiz = await storage.createQuiz(validatedQuiz);
 
+      console.log('Created quiz:', quiz);
+      console.log('Quiz questions:', quiz.questions);
+
       res.json({
         quizId: quiz.id,
         questions: quiz.questions,
@@ -168,6 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       console.error('Quiz generation error:', error);
+      console.error('Error details:', error);
       res.status(500).json({ 
         error: error instanceof Error ? error.message : 'Quiz generation failed' 
       });
@@ -178,7 +189,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/quizzes/:quizId', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
       const { quizId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user!.id;
       
       const quiz = await storage.getQuiz(quizId);
       if (!quiz) {
@@ -208,7 +219,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/uploads/:uploadId', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
       const { uploadId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user!.id;
       
       const upload = await storage.getUpload(uploadId);
       if (!upload) {

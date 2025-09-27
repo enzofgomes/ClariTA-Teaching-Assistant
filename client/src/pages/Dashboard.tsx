@@ -23,7 +23,6 @@ interface Quiz {
   createdAt: string;
   meta: {
     countsByType: Record<string, number>;
-    avgConfidence: number;
   };
 }
 
