@@ -95,15 +95,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateQuiz(id: string, updates: UpdateQuiz): Promise<Quiz> {
+    const updateData: any = {
+      updatedAt: new Date(),
+    };
+
+    // Only set fields that are provided in updates
+    if (updates.name !== undefined) updateData.name = updates.name;
+    if (updates.folder !== undefined) updateData.folder = updates.folder;
+    if (updates.tags !== undefined) updateData.tags = updates.tags;
+    if (updates.questions !== undefined) updateData.questions = updates.questions;
+    if (updates.meta !== undefined) updateData.meta = updates.meta;
+
+    console.log('updateQuiz called with:', { id, updateData });
+
     const [result] = await db
       .update(quizzes)
-      .set({
-        ...updates,
-        tags: updates.tags as any,
-        updatedAt: new Date(),
-      })
+      .set(updateData)
       .where(eq(quizzes.id, id))
       .returning();
+    
+    console.log('updateQuiz result:', result);
     return result;
   }
 

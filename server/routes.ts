@@ -441,6 +441,222 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test endpoint to check database update
+  app.post('/api/debug/test-update/:quizId', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+
+      console.log('=== TEST UPDATE START ===');
+      
+      // Get the existing quiz
+      const existingQuiz = await storage.getQuiz(quizId);
+      if (!existingQuiz) {
+        return res.status(404).json({ error: 'Quiz not found' });
+      }
+
+      if (existingQuiz.userId !== userId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+
+      console.log('Testing simple update...');
+      
+      // Try a simple update first (just updating the name)
+      const testUpdate = await storage.updateQuiz(quizId, {
+        name: existingQuiz.name + ' (test)'
+      });
+      
+      console.log('Simple update successful:', testUpdate.id);
+      
+      // Revert the change
+      await storage.updateQuiz(quizId, {
+        name: existingQuiz.name
+      });
+      
+      console.log('Revert successful');
+      console.log('=== TEST UPDATE END ===');
+      
+      res.json({ success: true, message: 'Database update test passed' });
+
+    } catch (error) {
+      console.error('Test update error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Test failed' });
+    }
+  });
+
+  // Debug endpoint to test quiz regeneration
+  app.post('/api/debug/regenerate/:quizId', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+
+      console.log('=== DEBUG REGENERATE START ===');
+      console.log('Quiz ID:', quizId);
+      console.log('User ID:', userId);
+
+      // Get the existing quiz
+      const existingQuiz = await storage.getQuiz(quizId);
+      console.log('Existing quiz found:', !!existingQuiz);
+      if (existingQuiz) {
+        console.log('Quiz details:', {
+          id: existingQuiz.id,
+          userId: existingQuiz.userId,
+          uploadId: existingQuiz.uploadId,
+          questionsCount: existingQuiz.questions?.length,
+          meta: existingQuiz.meta
+        });
+      }
+
+      // Get the upload
+      if (existingQuiz) {
+        const upload = await storage.getUpload(existingQuiz.uploadId);
+        console.log('Upload found:', !!upload);
+        if (upload) {
+          console.log('Upload details:', {
+            id: upload.id,
+            textByPageLength: upload.textByPage?.length,
+            pageCount: upload.pageCount
+          });
+        }
+      }
+
+      console.log('=== DEBUG REGENERATE END ===');
+      res.json({ success: true, message: 'Debug info logged to console' });
+
+    } catch (error) {
+      console.error('Debug regenerate error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Debug failed' });
+    }
+  });
+
+  // Regenerate quiz endpoint (protected)
+  app.post('/api/quizzes/:quizId/regenerate', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+
+      console.log('Regenerating quiz:', quizId, 'for user:', userId);
+
+      // Get the existing quiz to extract settings
+      const existingQuiz = await storage.getQuiz(quizId);
+      if (!existingQuiz) {
+        return res.status(404).json({ error: 'Quiz not found' });
+      }
+
+      // Check if user owns this quiz
+      if (existingQuiz.userId !== userId) {
+        return res.status(403).json({ error: 'Unauthorized access to quiz' });
+      }
+
+      // Get the original upload to regenerate from
+      const upload = await storage.getUpload(existingQuiz.uploadId);
+      if (!upload) {
+        return res.status(404).json({ error: 'Original upload not found' });
+      }
+
+      // Extract settings from existing quiz
+      const numQuestions = existingQuiz.questions.length;
+      const questionTypes = existingQuiz.meta.countsByType;
+      
+      // Convert counts to boolean settings
+      const questionTypeSettings = {
+        mcq: questionTypes.mcq > 0,
+        tf: questionTypes.tf > 0,
+        fill: questionTypes.fill > 0
+      };
+
+      console.log('Regenerating with settings:', { numQuestions, questionTypeSettings });
+      console.log('Upload textByPage length:', upload.textByPage?.length);
+      console.log('Upload ID:', existingQuiz.uploadId);
+
+      // Generate new quiz using the same settings
+      console.log('Calling generateQuiz...');
+      let quizResult;
+      try {
+        quizResult = await generateQuiz({
+          textByPage: upload.textByPage,
+          numQuestions,
+          questionTypes: questionTypeSettings
+        }, existingQuiz.uploadId);
+        console.log('generateQuiz completed, questions count:', quizResult.questions.length);
+      } catch (generateError) {
+        console.error('generateQuiz failed:', generateError);
+        
+        // Check if it's a quota error and provide a clearer message
+        const errorMessage = generateError instanceof Error ? generateError.message : 'Unknown error';
+        if (errorMessage.includes('quota') || errorMessage.includes('limit')) {
+          throw new Error('API quota exceeded. Please try again tomorrow or upgrade your plan.');
+        }
+        
+        throw new Error(`Quiz generation failed: ${errorMessage}`);
+      }
+      console.log('Quiz result structure:', {
+        hasQuestions: !!quizResult.questions,
+        hasMeta: !!quizResult.meta,
+        questionsType: typeof quizResult.questions,
+        metaType: typeof quizResult.meta
+      });
+
+      // Validate the generated data
+      if (!quizResult.questions || !Array.isArray(quizResult.questions)) {
+        throw new Error('Generated quiz has invalid questions array');
+      }
+      if (!quizResult.meta) {
+        throw new Error('Generated quiz has no meta data');
+      }
+
+      // Update the existing quiz with new questions
+      console.log('Updating quiz in database...');
+      console.log('Update data:', {
+        questionsCount: quizResult.questions.length,
+        meta: quizResult.meta
+      });
+      
+      let updatedQuiz;
+      try {
+        const updateData = {
+          questions: quizResult.questions,
+          meta: quizResult.meta
+        };
+        
+        console.log('Update data validation:', {
+          questionsIsArray: Array.isArray(updateData.questions),
+          questionsLength: updateData.questions?.length,
+          metaIsObject: typeof updateData.meta === 'object',
+          metaKeys: updateData.meta ? Object.keys(updateData.meta) : []
+        });
+
+        updatedQuiz = await storage.updateQuiz(quizId, updateData);
+        console.log('Database update completed successfully');
+        console.log('Updated quiz ID:', updatedQuiz.id);
+      } catch (updateError) {
+        console.error('Database update failed:', updateError);
+        console.error('Update error details:', {
+          name: updateError instanceof Error ? updateError.name : 'Unknown',
+          message: updateError instanceof Error ? updateError.message : 'Unknown error',
+          stack: updateError instanceof Error ? updateError.stack : 'No stack trace'
+        });
+        throw updateError;
+      }
+
+      console.log('Quiz regenerated successfully:', updatedQuiz.id);
+      res.json(updatedQuiz);
+
+    } catch (error) {
+      console.error('Regenerate quiz error:', error);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error('Error details:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        cause: error instanceof Error ? error.cause : undefined
+      });
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to regenerate quiz',
+        details: error instanceof Error ? error.stack : undefined
+      });
+    }
+  });
+
   // Get user statistics endpoint (protected)
   app.get('/api/user/statistics', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {

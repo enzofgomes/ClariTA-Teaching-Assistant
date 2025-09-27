@@ -93,6 +93,8 @@ export const updateQuizSchema = createInsertSchema(quizzes).pick({
   name: true,
   folder: true,
   tags: true,
+  questions: true,
+  meta: true,
 }).partial();
 
 export const insertQuizAttemptSchema = createInsertSchema(quizAttempts).omit({
