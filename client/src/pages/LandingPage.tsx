@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { FileText, Zap, Brain, Users } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function LandingPage() {
-  const handleLogin = () => {
-    window.location.href = "/api/login";
+  const [, setLocation] = useLocation();
+
+  const handleGetStarted = () => {
+    setLocation("/login");
   };
 
   return (
@@ -14,8 +17,8 @@ export default function LandingPage() {
             <Brain className="h-8 w-8 text-blue-600" />
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">ClariTA</h1>
           </div>
-          <Button onClick={handleLogin} data-testid="button-login">
-            Sign In
+          <Button onClick={handleGetStarted} data-testid="button-login">
+            Get Started
           </Button>
         </div>
       </header>
@@ -35,7 +38,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button 
               size="lg" 
-              onClick={handleLogin}
+              onClick={handleGetStarted}
               className="text-lg px-8 py-3"
               data-testid="button-get-started"
             >

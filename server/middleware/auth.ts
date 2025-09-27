@@ -5,7 +5,6 @@ export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: string;
   };
 }
 
@@ -16,7 +15,6 @@ declare global {
       user?: {
         id: string;
         email: string;
-        role: string;
       };
     }
   }
@@ -31,7 +29,7 @@ export const authenticateUser = async (
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'No token provided' });
+      return res.status(401).json({ message: 'No authentication provided' });
     }
 
     const token = authHeader.split(' ')[1];
@@ -46,8 +44,7 @@ export const authenticateUser = async (
     // Add user info to request
     req.user = {
       id: user.id,
-      email: user.email!,
-      role: user.user_metadata?.role || 'user'
+      email: user.email!
     };
 
     return next();
@@ -57,24 +54,4 @@ export const authenticateUser = async (
   }
 };
 
-export const requireAdmin = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Admin access required' });
-  }
-  return next();
-};
-
-export const requireUserOrAdmin = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  if (!req.user || (req.user.role !== 'user' && req.user.role !== 'admin')) {
-    return res.status(403).json({ error: 'User or admin access required' });
-  }
-  return next();
-};
+// Role-based middleware removed - all authenticated users have equal access
