@@ -6,7 +6,7 @@ import { parsePDF } from "./services/pdf";
 import { generateQuiz } from "./services/gemini";
 import { insertUploadSchema, insertQuizSchema } from "@shared/schema";
 import { z } from "zod";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./supabaseAuth";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -30,11 +30,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/auth/user', async (req: any, res) => {
     try {
       // Check if user is authenticated
-      if (!req.isAuthenticated() || !req.user) {
+      if (!req.user) {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const userId = req.user.userId || req.user.claims?.sub;
+      const userId = req.user.id;
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
@@ -54,7 +54,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user's uploads
   app.get('/api/user/uploads', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.userId || req.user.claims?.sub;
+      const userId = req.user.id;
       const uploads = await storage.getUserUploads(userId);
       res.json(uploads);
     } catch (error) {
@@ -66,7 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user's quizzes
   app.get('/api/user/quizzes', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.userId || req.user.claims?.sub;
+      const userId = req.user.id;
       const quizzes = await storage.getUserQuizzes(userId);
       res.json(quizzes);
     } catch (error) {
@@ -86,7 +86,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const pdfResult = await parsePDF(req.file.buffer);
       
       // Create upload record
-      const userId = req.user.userId || req.user.claims?.sub;
+      const userId = req.user.id;
       const uploadData = {
         userId,
         fileName: req.file.originalname,
@@ -127,7 +127,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get user and upload data
-      const userId = req.user.userId || req.user.claims?.sub;
+      const userId = req.user.id;
       const upload = await storage.getUpload(uploadId);
       if (!upload) {
         return res.status(404).json({ error: 'Upload not found' });
@@ -173,7 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/quizzes/:quizId', isAuthenticated, async (req: any, res) => {
     try {
       const { quizId } = req.params;
-      const userId = req.user.userId || req.user.claims?.sub;
+      const userId = req.user.id;
       
       const quiz = await storage.getQuiz(quizId);
       if (!quiz) {
@@ -203,7 +203,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/uploads/:uploadId', isAuthenticated, async (req: any, res) => {
     try {
       const { uploadId } = req.params;
-      const userId = req.user.userId || req.user.claims?.sub;
+      const userId = req.user.id;
       
       const upload = await storage.getUpload(uploadId);
       if (!upload) {
