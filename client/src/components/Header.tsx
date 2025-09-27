@@ -8,22 +8,22 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 const teamMembers = [
   {
     name: "Enzo",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+    description: "BS Information Technology | FIU | First Time Hacker",
     initial: "E"
   },
   {
     name: "Angelica", 
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+    description: "AA Computer Science | MDC | First Time Hacker",
     initial: "A"
   },
   {
     name: "Fabianne",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+    description: "BS Computer Science | FIU | First Time Hacker",
     initial: "F"
   },
   {
     name: "Veronica",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+    description: "AA Computer Science | MDC | First Time Hacker",
     initial: "V"
   }
 ];
