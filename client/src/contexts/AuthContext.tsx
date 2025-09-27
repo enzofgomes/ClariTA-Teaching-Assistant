@@ -7,8 +7,8 @@ interface AuthContextType {
   user: AuthUser | null;
   session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -119,13 +119,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        return { error: { message: errorData.error || 'Registration failed' } };
+        return { error: new Error(errorData.error || 'Registration failed') };
       }
 
       return { error: null };
     } catch (error) {
       console.error('Registration error:', error);
-      return { error: { message: 'Network error during registration' } };
+      return { error: new Error('Network error during registration') };
     }
   };
 

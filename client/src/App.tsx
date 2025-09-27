@@ -7,7 +7,6 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import AuthForm from "@/components/AuthForm";
 import UploadPage from "@/pages/UploadPage";
 import QuizPage from "@/pages/QuizPage";
-import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 
@@ -25,7 +24,7 @@ function Router() {
   return (
     <Switch>
       {!user ? (
-        <Route path="/" component={AuthForm} />
+        <Route path="/" component={() => <AuthForm />} />
       ) : (
         <>
           <Route path="/" component={Dashboard} />

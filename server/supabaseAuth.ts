@@ -37,7 +37,7 @@ export function getSession() {
   });
 }
 
-async function upsertUser(user: any) {
+async function upsertUser(user: { id: string; email: string; user_metadata?: { full_name?: string; avatar_url?: string } }) {
   try {
     await storage.upsertUser({
       id: user.id,
