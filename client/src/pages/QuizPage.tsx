@@ -1,12 +1,12 @@
 import { useParams, useLocation } from "wouter";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { QuizCard } from "@/components/QuizCard";
 import { Toolbar } from "@/components/Toolbar";
-import { GraduationCap, Moon, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
+import { GraduationCap, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { authenticatedFetch } from "@/lib/api";
 import type { Quiz, Question } from "@/types/quiz";
 
@@ -34,6 +34,7 @@ export default function QuizPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const saveAttemptMutation = useMutation({
     mutationFn: async (attemptData: any) => {
@@ -159,10 +160,50 @@ export default function QuizPage() {
     });
   };
 
+  const regenerateQuizMutation = useMutation({
+    mutationFn: async (quizId: string) => {
+      const response = await authenticatedFetch(`/api/quizzes/${quizId}/regenerate`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error('Failed to regenerate quiz');
+      }
+      return response.json();
+    },
+    onSuccess: (newQuiz) => {
+      // Reset the quiz state with new questions
+      setUserAnswers({});
+      setIsSubmitted(false);
+      setQuizResult(null);
+      
+      // Invalidate the quiz query to refetch with new questions
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes", quizId] });
+      
+      toast({
+        title: "Quiz Regenerated!",
+        description: "New questions have been generated for better learning.",
+      });
+    },
+    onError: (error) => {
+      console.error('Failed to regenerate quiz:', error);
+      
+      // Check if it's a quota error
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const isQuotaError = errorMessage.includes('quota') || errorMessage.includes('limit');
+      
+      toast({
+        title: "Regeneration Failed",
+        description: isQuotaError 
+          ? "API quota exceeded. Please try again tomorrow or upgrade your plan."
+          : "Could not generate new questions. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const resetQuiz = () => {
-    setUserAnswers({});
-    setIsSubmitted(false);
-    setQuizResult(null);
+    if (!quizId) return;
+    regenerateQuizMutation.mutate(quizId);
   };
 
 
@@ -244,8 +285,12 @@ export default function QuizPage() {
                 </div>
               </div>
               <div className="flex justify-center space-x-4">
-                <Button onClick={resetQuiz} variant="outline">
-                  Retake Quiz
+                <Button 
+                  onClick={resetQuiz} 
+                  variant="outline"
+                  disabled={regenerateQuizMutation.isPending}
+                >
+                  {regenerateQuizMutation.isPending ? "Generating..." : "Retake Quiz"}
                 </Button>
                 <Button onClick={() => window.location.href = "/dashboard"}>
                   Back to Dashboard
