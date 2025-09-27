@@ -1,11 +1,11 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Brain, Plus, LogOut, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { isUnauthorizedError } from "@/lib/authUtils";
+import { authenticatedFetch } from "@/lib/api";
 import { useEffect } from "react";
 import type { User as UserType } from "@shared/schema";
 
@@ -28,21 +28,29 @@ interface Quiz {
 }
 
 export default function Dashboard() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, signOut } = useSupabaseAuth();
   const { toast } = useToast();
 
   const { data: uploads, isLoading: uploadsLoading } = useQuery<Upload[]>({
     queryKey: ["/api/user/uploads"],
     retry: false,
+    queryFn: async () => {
+      const response = await authenticatedFetch("/api/user/uploads");
+      return response.json();
+    },
   });
 
   const { data: quizzes, isLoading: quizzesLoading } = useQuery<Quiz[]>({
     queryKey: ["/api/user/quizzes"],
     retry: false,
+    queryFn: async () => {
+      const response = await authenticatedFetch("/api/user/quizzes");
+      return response.json();
+    },
   });
 
   const handleLogout = () => {
-    window.location.href = "/api/logout";
+    signOut();
   };
 
   if (isLoading) {

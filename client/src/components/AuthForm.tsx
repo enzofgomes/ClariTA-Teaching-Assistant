@@ -11,7 +11,7 @@ interface AuthFormProps {
   onSuccess?: () => void;
 }
 
-export function AuthForm({ onSuccess }: AuthFormProps) {
+export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
