@@ -24,7 +24,7 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={HomePage} />
+      <Route path="/" component={LandingPage} />
       {!isAuthenticated ? (
         <Route path="/login" component={AuthForm} />
       ) : (
