@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLocation, Redirect } from 'wouter';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -23,7 +24,21 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, loading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // Redirect to dashboard if already authenticated
+  if (user) {
+    return <Redirect to="/dashboard" />;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +57,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
           setError(error.message || 'Sign up failed');
         } else {
           onSuccess?.();
+          setLocation('/dashboard');
         }
       } else {
         const { error } = await signIn(formData.email, formData.password);
@@ -50,6 +66,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
           setError(error.message || 'Sign in failed');
         } else {
           onSuccess?.();
+          setLocation('/dashboard');
         }
       }
     } catch (err) {
