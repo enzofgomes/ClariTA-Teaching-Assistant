@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "../lib/supabase";
 import type { User } from "@shared/schema";
 
 interface AuthUser {
@@ -20,7 +21,20 @@ export function useSupabaseAuth() {
     staleTime: 0, // Always check for fresh auth state
     refetchOnWindowFocus: true, // Refetch when user returns to tab
     queryFn: async () => {
-      const response = await fetch("/api/auth/user");
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        return null;
+      }
+
+      // Make API call with the session token
+      const response = await fetch("/api/auth/user", {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
       if (response.status === 401) {
         // 401 means not authenticated, return null instead of throwing
         return null;
@@ -34,20 +48,16 @@ export function useSupabaseAuth() {
 
   const signInMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const response = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Sign in failed");
+      if (error) {
+        throw new Error(error.message);
       }
 
-      return response.json();
+      return data;
     },
     onSuccess: () => {
       // Invalidate and refetch user data
@@ -67,20 +77,22 @@ export function useSupabaseAuth() {
       firstName?: string; 
       lastName?: string; 
     }) => {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, firstName, lastName }),
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          }
+        }
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Sign up failed");
+      if (error) {
+        throw new Error(error.message);
       }
 
-      return response.json();
+      return data;
     },
     onSuccess: () => {
       // Invalidate and refetch user data
@@ -90,16 +102,13 @@ export function useSupabaseAuth() {
 
   const signOutMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/auth/signout", {
-        method: "POST",
-      });
+      const { error } = await supabase.auth.signOut();
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Sign out failed");
+      if (error) {
+        throw new Error(error.message);
       }
 
-      return response.json();
+      return { message: 'Signed out successfully' };
     },
     onSuccess: () => {
       // Clear all queries and set user to null

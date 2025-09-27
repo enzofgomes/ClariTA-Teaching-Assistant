@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { authenticatedFetch } from "@/lib/api";
 import { Uploader } from "@/components/Uploader";
 import { GraduationCap, Moon, Brain, FileText, Scale, FileCheck } from "lucide-react";
 import type { Upload } from "@/types/quiz";
@@ -16,7 +16,10 @@ export default function UploadPage() {
 
   const generateQuizMutation = useMutation({
     mutationFn: async (uploadId: string) => {
-      const response = await apiRequest("POST", "/api/quizzes", { uploadId, numQuestions: 10 });
+      const response = await authenticatedFetch("/api/quizzes", {
+        method: "POST",
+        body: JSON.stringify({ uploadId, numQuestions: 10 }),
+      });
       return response.json();
     },
     onSuccess: (data) => {

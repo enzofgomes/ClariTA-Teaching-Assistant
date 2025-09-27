@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { CloudUpload } from "lucide-react";
+import { authenticatedFetch } from "@/lib/api";
 import type { Upload } from "@/types/quiz";
 
 interface UploaderProps {
@@ -20,9 +21,10 @@ export function Uploader({ onUploadSuccess }: UploaderProps) {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await fetch('/api/upload', {
+      const response = await authenticatedFetch('/api/upload', {
         method: 'POST',
         body: formData,
+        headers: {}, // Let authenticatedFetch handle auth headers
       });
       
       if (!response.ok) {
