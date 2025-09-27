@@ -3,7 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import AuthForm from "@/components/AuthForm";
 import UploadPage from "@/pages/UploadPage";
 import QuizPage from "@/pages/QuizPage";
@@ -12,9 +12,9 @@ import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useSupabaseAuth();
+  const { user, loading } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -24,7 +24,7 @@ function Router() {
 
   return (
     <Switch>
-      {!isAuthenticated ? (
+      {!user ? (
         <Route path="/" component={AuthForm} />
       ) : (
         <>
@@ -41,10 +41,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -1,22 +1,22 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, timestamp, jsonb, real, index } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, timestamp, jsonb, real, index, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// User storage table for Supabase Auth
+// User storage table for Supabase Auth - extends Supabase auth.users
 export const users = pgTable("users", {
   id: varchar("id").primaryKey(), // Use Supabase auth user ID
-  email: varchar("email").unique().notNull(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  fullName: varchar("full_name", { length: 255 }),
+  role: varchar("role", { length: 50 }).notNull().default("user"), // 'user' or 'admin'
   profileImageUrl: varchar("profile_image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const uploads = pgTable("uploads", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").references(() => users.id),
+  userId: varchar("user_id").notNull().references(() => users.id),
   fileName: text("file_name").notNull(),
   fileSize: integer("file_size").notNull(),
   pageCount: integer("page_count").notNull(),
@@ -26,7 +26,7 @@ export const uploads = pgTable("uploads", {
 
 export const quizzes = pgTable("quizzes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").references(() => users.id),
+  userId: varchar("user_id").notNull().references(() => users.id),
   uploadId: varchar("upload_id").notNull().references(() => uploads.id),
   questions: jsonb("questions").$type<Question[]>().notNull(),
   meta: jsonb("meta").$type<QuizMeta>().notNull(),
@@ -74,6 +74,14 @@ export type InsertQuiz = z.infer<typeof insertQuizSchema>;
 export type Upload = typeof uploads.$inferSelect;
 export type Quiz = typeof quizzes.$inferSelect;
 
-// User types for Replit Auth
+// User types for Supabase Auth
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+
+// Auth user interface for frontend
+export interface AuthUser {
+  id: string;
+  email: string;
+  fullName?: string;
+  role: string;
+}
