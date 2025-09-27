@@ -7,7 +7,7 @@ import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import AuthForm from "@/components/AuthForm";
 import UploadPage from "@/pages/UploadPage";
 import QuizPage from "@/pages/QuizPage";
-import HomePage from "@/pages/HomePage";
+import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 
