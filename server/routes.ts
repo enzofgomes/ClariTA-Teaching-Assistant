@@ -4,7 +4,7 @@ import multer from "multer";
 import { storage } from "./storage";
 import { parsePDF } from "./services/pdf";
 import { generateQuiz } from "./services/gemini";
-import { insertUploadSchema, insertQuizSchema } from "@shared/schema";
+import { insertUploadSchema, insertQuizSchema, updateQuizSchema, insertQuizAttemptSchema } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./supabaseAuth";
 import { authenticateUser, AuthenticatedRequest } from "./middleware/auth";
@@ -201,6 +201,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: 'Unauthorized access to quiz' });
       }
 
+      // Debug: Log the quiz structure for MCQ questions
+      console.log('Quiz data for results:', {
+        quizId: quiz.id,
+        questionsCount: quiz.questions?.length,
+        mcqQuestions: quiz.questions?.filter(q => q.type === 'mcq').map(q => ({
+          id: q.id,
+          type: q.type,
+          options: q.options,
+          optionsLength: q.options?.length,
+          answer: q.answer
+        }))
+      });
+
       res.json({
         quizId: quiz.id,
         questions: quiz.questions,
@@ -243,6 +256,208 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Get upload error:', error);
       res.status(500).json({ 
         error: error instanceof Error ? error.message : 'Failed to get upload' 
+      });
+    }
+  });
+
+  // Update quiz endpoint (protected)
+  app.patch('/api/quizzes/:quizId', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+      
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        return res.status(404).json({ error: 'Quiz not found' });
+      }
+
+      // Check if user owns this quiz
+      if (quiz.userId !== userId) {
+        return res.status(403).json({ error: 'Unauthorized access to quiz' });
+      }
+
+      const validatedData = updateQuizSchema.parse(req.body);
+      const updatedQuiz = await storage.updateQuiz(quizId, validatedData);
+
+      res.json({
+        quizId: updatedQuiz.id,
+        name: updatedQuiz.name,
+        folder: updatedQuiz.folder,
+        tags: updatedQuiz.tags,
+        updatedAt: updatedQuiz.updatedAt
+      });
+
+    } catch (error) {
+      console.error('Update quiz error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to update quiz' 
+      });
+    }
+  });
+
+  // Delete quiz endpoint (protected)
+  app.delete('/api/quizzes/:quizId', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+      
+      console.log('Delete quiz request:', { quizId, userId });
+      
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        console.log('Quiz not found:', quizId);
+        return res.status(404).json({ error: 'Quiz not found' });
+      }
+
+      // Check if user owns this quiz
+      if (quiz.userId !== userId) {
+        console.log('Unauthorized access:', { quizUserId: quiz.userId, requestUserId: userId });
+        return res.status(403).json({ error: 'Unauthorized access to quiz' });
+      }
+
+      console.log('Deleting quiz:', quizId);
+      await storage.deleteQuiz(quizId);
+      console.log('Quiz deleted successfully:', quizId);
+
+      res.json({ message: 'Quiz deleted successfully' });
+
+    } catch (error) {
+      console.error('Delete quiz error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to delete quiz' 
+      });
+    }
+  });
+
+  // Get user's quiz folders endpoint (protected)
+  app.get('/api/user/quiz-folders', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const folders = await storage.getUserQuizFolders(userId);
+      res.json(folders);
+    } catch (error) {
+      console.error("Error fetching quiz folders:", error);
+      res.status(500).json({ message: "Failed to fetch quiz folders" });
+    }
+  });
+
+  // Create quiz attempt endpoint (protected)
+  app.post('/api/quiz-attempts', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      console.log('Creating quiz attempt for user:', userId);
+      console.log('Request body:', req.body);
+      console.log('Auth header:', req.headers.authorization);
+      
+      const attemptData = {
+        userId,
+        ...req.body
+      };
+
+      console.log('Attempt data before validation:', attemptData);
+      const validatedData = insertQuizAttemptSchema.parse(attemptData);
+      console.log('Validated data:', validatedData);
+      
+      const attempt = await storage.createQuizAttempt(validatedData);
+      console.log('Created attempt:', attempt);
+
+      res.json({
+        attemptId: attempt.id,
+        score: attempt.score,
+        totalQuestions: attempt.totalQuestions,
+        percentage: attempt.percentage,
+        completedAt: attempt.completedAt
+      });
+
+    } catch (error) {
+      console.error('Create quiz attempt error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to save quiz attempt' 
+      });
+    }
+  });
+
+  // Get quiz attempts endpoint (protected)
+  app.get('/api/quizzes/:quizId/attempts', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+      
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        return res.status(404).json({ error: 'Quiz not found' });
+      }
+
+      // Check if user owns this quiz
+      if (quiz.userId !== userId) {
+        return res.status(403).json({ error: 'Unauthorized access to quiz' });
+      }
+
+      const attempts = await storage.getQuizAttempts(quizId);
+      res.json(attempts);
+
+    } catch (error) {
+      console.error('Get quiz attempts error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to get quiz attempts' 
+      });
+    }
+  });
+
+  // Get latest quiz attempt endpoint (protected)
+  app.get('/api/quizzes/:quizId/latest-attempt', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+      
+      console.log('Getting latest attempt for quiz:', quizId, 'user:', userId);
+      
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        console.log('Quiz not found:', quizId);
+        return res.status(404).json({ error: 'Quiz not found' });
+      }
+
+      // Check if user owns this quiz
+      if (quiz.userId !== userId) {
+        console.log('User does not own quiz:', userId, 'vs', quiz.userId);
+        return res.status(403).json({ error: 'Unauthorized access to quiz' });
+      }
+
+      const attempt = await storage.getLatestQuizAttempt(quizId, userId);
+      console.log('Latest attempt found:', attempt);
+      
+      if (!attempt) {
+        return res.status(404).json({ error: 'No attempts found' });
+      }
+
+      res.json(attempt);
+
+    } catch (error) {
+      console.error('Get latest quiz attempt error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to get latest quiz attempt' 
+      });
+    }
+  });
+
+  // Debug endpoint to check all attempts for a quiz
+  app.get('/api/debug/quizzes/:quizId/attempts', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user!.id;
+      
+      console.log('Debug: Getting all attempts for quiz:', quizId, 'user:', userId);
+      
+      const attempts = await storage.getQuizAttempts(quizId);
+      console.log('All attempts for quiz:', attempts);
+      
+      res.json({ quizId, userId, attempts });
+
+    } catch (error) {
+      console.error('Debug get attempts error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to get attempts' 
       });
     }
   });

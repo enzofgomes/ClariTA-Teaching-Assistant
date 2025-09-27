@@ -1,5 +1,5 @@
 import { useParams, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,48 @@ export default function QuizPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const { toast } = useToast();
+
+  const saveAttemptMutation = useMutation({
+    mutationFn: async (attemptData: any) => {
+      console.log("Saving quiz attempt:", attemptData);
+      const response = await authenticatedFetch("/api/quiz-attempts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(attemptData),
+      });
+      if (!response.ok) {
+        let errorText;
+        try {
+          errorText = await response.text();
+        } catch (e) {
+          errorText = "Unknown error";
+        }
+        console.error("Failed to save quiz attempt:", response.status, errorText);
+        throw new Error(`Failed to save quiz attempt: ${response.status} - ${errorText}`);
+      }
+      
+      let result;
+      try {
+        result = await response.json();
+        console.log("Quiz attempt saved successfully:", result);
+      } catch (e) {
+        console.error("Failed to parse response as JSON:", e);
+        throw new Error("Invalid response format from server");
+      }
+      return result;
+    },
+    onSuccess: (data) => {
+      console.log("Quiz attempt saved successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Failed to save quiz attempt:", error);
+      toast({
+        title: "Warning",
+        description: "Quiz completed but results may not be saved properly.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const { data: quiz, isLoading, error } = useQuery<Quiz>({
     queryKey: ["/api/quizzes", quizId],
@@ -102,6 +144,15 @@ export default function QuizPage() {
     setQuizResult(result);
     setIsSubmitted(true);
 
+    // Save the quiz attempt
+    saveAttemptMutation.mutate({
+      quizId: quiz.quizId,
+      score: correctCount,
+      totalQuestions: quiz.questions.length,
+      percentage,
+      answers: results
+    });
+
     toast({
       title: "Quiz Submitted!",
       description: `You scored ${correctCount}/${quiz.questions.length} (${percentage}%)`,
@@ -160,7 +211,7 @@ export default function QuizPage() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  onClick={() => setLocation("/")}
+                  onClick={() => setLocation("/dashboard")}
                   data-testid="button-back"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -266,7 +317,7 @@ export default function QuizPage() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => setLocation("/")}
+                onClick={() => setLocation("/dashboard")}
                 data-testid="button-back"
               >
                 <ArrowLeft className="h-4 w-4" />

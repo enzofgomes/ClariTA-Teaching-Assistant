@@ -4,12 +4,16 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { lazy, Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 import LandingPage from "@/pages/LandingPage";
-import UploadPage from "@/pages/UploadPage";
-import QuizPage from "@/pages/QuizPage";
-import Dashboard from "@/pages/Dashboard";
-import NotFound from "@/pages/not-found";
+
+// Lazy load pages for better performance
+const UploadPage = lazy(() => import("@/pages/UploadPage"));
+const QuizPage = lazy(() => import("@/pages/QuizPage"));
+const QuizResultsPage = lazy(() => import("@/pages/QuizResultsPage"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const NotFound = lazy(() => import("@/pages/not-found"));
 
 function Router() {
   const { user, loading } = useAuth();
@@ -23,18 +27,25 @@ function Router() {
   }
 
   return (
-    <Switch>
-      <Route path="/" component={LandingPage} />
-      <Route path="/login" component={() => <AuthForm />} />
-      {user && (
-        <>
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/upload" component={UploadPage} />
-          <Route path="/quiz/:quizId" component={QuizPage} />
-        </>
-      )}
-      <Route component={NotFound} />
-    </Switch>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    }>
+      <Switch>
+        <Route path="/" component={LandingPage} />
+        <Route path="/login" component={() => <AuthForm />} />
+        {user && (
+          <>
+            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/upload" component={UploadPage} />
+            <Route path="/quiz/:quizId" component={QuizPage} />
+            <Route path="/quiz-results/:quizId" component={QuizResultsPage} />
+          </>
+        )}
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 
