@@ -4,9 +4,13 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
   const { data: { session } } = await supabase.auth.getSession();
   
   const headers = {
-    'Content-Type': 'application/json',
     ...options.headers,
   };
+
+  // Only set Content-Type to application/json if it's not already set and body is not FormData
+  if (!headers['Content-Type'] && !(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (session?.access_token) {
     headers['Authorization'] = `Bearer ${session.access_token}`;
