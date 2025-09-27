@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { uploads, quizzes, users, type Upload, type Quiz, type InsertUpload, type InsertQuiz, type User, type UpsertUser } from "@shared/schema";
+import { uploads, quizzes, users, quizAttempts, type Upload, type Quiz, type InsertUpload, type InsertQuiz, type UpdateQuiz, type InsertQuizAttempt, type QuizAttempt, type User, type UpsertUser } from "@shared/schema";
 
 const client = postgres(process.env.DATABASE_URL!);
 const db = drizzle(client);
@@ -21,6 +21,15 @@ export interface IStorage {
   getQuiz(id: string): Promise<Quiz | undefined>;
   getQuizzesByUploadId(uploadId: string): Promise<Quiz[]>;
   getUserQuizzes(userId: string): Promise<Quiz[]>;
+  updateQuiz(id: string, updates: UpdateQuiz): Promise<Quiz>;
+  deleteQuiz(id: string): Promise<void>;
+  getUserQuizFolders(userId: string): Promise<string[]>;
+  
+  // Quiz attempt operations
+  createQuizAttempt(attempt: InsertQuizAttempt): Promise<QuizAttempt>;
+  getQuizAttempts(quizId: string): Promise<QuizAttempt[]>;
+  getUserQuizAttempts(userId: string): Promise<QuizAttempt[]>;
+  getLatestQuizAttempt(quizId: string, userId: string): Promise<QuizAttempt | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -70,7 +79,8 @@ export class DatabaseStorage implements IStorage {
     const [result] = await db.insert(quizzes).values({
       ...quiz,
       questions: quiz.questions as any,
-      meta: quiz.meta as any
+      meta: quiz.meta as any,
+      tags: quiz.tags as any
     }).returning();
     return result;
   }
@@ -82,6 +92,73 @@ export class DatabaseStorage implements IStorage {
 
   async getQuizzesByUploadId(uploadId: string): Promise<Quiz[]> {
     return await db.select().from(quizzes).where(eq(quizzes.uploadId, uploadId));
+  }
+
+  async updateQuiz(id: string, updates: UpdateQuiz): Promise<Quiz> {
+    const [result] = await db
+      .update(quizzes)
+      .set({
+        ...updates,
+        tags: updates.tags as any,
+        updatedAt: new Date(),
+      })
+      .where(eq(quizzes.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteQuiz(id: string): Promise<void> {
+    try {
+      // First delete all quiz attempts associated with this quiz
+      await db.delete(quizAttempts).where(eq(quizAttempts.quizId, id));
+      
+      // Then delete the quiz itself
+      await db.delete(quizzes).where(eq(quizzes.id, id));
+    } catch (error) {
+      console.error('Error deleting quiz:', id, error);
+      throw error;
+    }
+  }
+
+  async getUserQuizFolders(userId: string): Promise<string[]> {
+    const userQuizzes = await db
+      .select({ folder: quizzes.folder })
+      .from(quizzes)
+      .where(eq(quizzes.userId, userId));
+    
+    const folders = userQuizzes
+      .map(q => q.folder)
+      .filter((folder): folder is string => folder !== null && folder !== undefined)
+      .filter((folder, index, arr) => arr.indexOf(folder) === index); // Remove duplicates
+    
+    return folders;
+  }
+
+  // Quiz attempt operations
+  async createQuizAttempt(attempt: InsertQuizAttempt): Promise<QuizAttempt> {
+    const [result] = await db.insert(quizAttempts).values({
+      ...attempt,
+      answers: attempt.answers as any
+    }).returning();
+    return result;
+  }
+
+  async getQuizAttempts(quizId: string): Promise<QuizAttempt[]> {
+    return await db.select().from(quizAttempts).where(eq(quizAttempts.quizId, quizId));
+  }
+
+  async getUserQuizAttempts(userId: string): Promise<QuizAttempt[]> {
+    return await db.select().from(quizAttempts).where(eq(quizAttempts.userId, userId));
+  }
+
+  async getLatestQuizAttempt(quizId: string, userId: string): Promise<QuizAttempt | undefined> {
+    const [result] = await db
+      .select()
+      .from(quizAttempts)
+      .where(and(eq(quizAttempts.quizId, quizId), eq(quizAttempts.userId, userId)))
+      .orderBy(desc(quizAttempts.completedAt))
+      .limit(1);
+    return result;
   }
 }
 

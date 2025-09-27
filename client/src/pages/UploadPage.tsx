@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +15,7 @@ export default function UploadPage() {
   const [uploadResult, setUploadResult] = useState<Upload | null>(null);
   const [showConfig, setShowConfig] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const generateQuizMutation = useMutation({
     mutationFn: async ({ uploadId, config }: { uploadId: string; config: QuizConfigType }) => {
@@ -35,6 +36,11 @@ export default function UploadPage() {
     onSuccess: (data) => {
       console.log('Quiz generation response:', data);
       if (data && data.questions && Array.isArray(data.questions)) {
+        // Invalidate dashboard queries to refresh the data
+        queryClient.invalidateQueries({ queryKey: ["/api/user/quizzes"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/user/quiz-folders"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/user/uploads"] });
+        
         toast({
           title: "Quiz Generated!",
           description: `Successfully created ${data.questions.length} questions.`,
@@ -56,6 +62,8 @@ export default function UploadPage() {
   const handleUploadSuccess = (upload: Upload) => {
     setUploadResult(upload);
     setShowConfig(true);
+    // Invalidate uploads query to refresh dashboard
+    queryClient.invalidateQueries({ queryKey: ["/api/user/uploads"] });
     toast({
       title: "Upload Successful",
       description: `Processed ${upload.pageCount} pages from ${upload.fileName}`,

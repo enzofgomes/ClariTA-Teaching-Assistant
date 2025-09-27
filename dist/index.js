@@ -7,7 +7,7 @@ import { createServer } from "http";
 import multer from "multer";
 
 // server/storage.ts
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
@@ -37,9 +37,26 @@ var quizzes = pgTable("quizzes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id),
   uploadId: varchar("upload_id").notNull().references(() => uploads.id),
+  name: varchar("name", { length: 255 }),
+  // Custom quiz name
+  folder: varchar("folder", { length: 255 }),
+  // Folder/category
+  tags: jsonb("tags").$type(),
+  // Tags for organization
   questions: jsonb("questions").$type().notNull(),
   meta: jsonb("meta").$type().notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull()
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+var quizAttempts = pgTable("quiz_attempts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  quizId: varchar("quiz_id").notNull().references(() => quizzes.id),
+  score: integer("score").notNull(),
+  totalQuestions: integer("total_questions").notNull(),
+  percentage: integer("percentage").notNull(),
+  answers: jsonb("answers").$type().notNull(),
+  completedAt: timestamp("completed_at").defaultNow().notNull()
 });
 var insertUploadSchema = createInsertSchema(uploads).omit({
   id: true,
@@ -47,7 +64,17 @@ var insertUploadSchema = createInsertSchema(uploads).omit({
 });
 var insertQuizSchema = createInsertSchema(quizzes).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
+  updatedAt: true
+});
+var updateQuizSchema = createInsertSchema(quizzes).pick({
+  name: true,
+  folder: true,
+  tags: true
+}).partial();
+var insertQuizAttemptSchema = createInsertSchema(quizAttempts).omit({
+  id: true,
+  completedAt: true
 });
 
 // server/storage.ts
@@ -90,7 +117,8 @@ var DatabaseStorage = class {
     const [result] = await db.insert(quizzes).values({
       ...quiz,
       questions: quiz.questions,
-      meta: quiz.meta
+      meta: quiz.meta,
+      tags: quiz.tags
     }).returning();
     return result;
   }
@@ -100,6 +128,46 @@ var DatabaseStorage = class {
   }
   async getQuizzesByUploadId(uploadId) {
     return await db.select().from(quizzes).where(eq(quizzes.uploadId, uploadId));
+  }
+  async updateQuiz(id, updates) {
+    const [result] = await db.update(quizzes).set({
+      ...updates,
+      tags: updates.tags,
+      updatedAt: /* @__PURE__ */ new Date()
+    }).where(eq(quizzes.id, id)).returning();
+    return result;
+  }
+  async deleteQuiz(id) {
+    try {
+      await db.delete(quizAttempts).where(eq(quizAttempts.quizId, id));
+      await db.delete(quizzes).where(eq(quizzes.id, id));
+    } catch (error) {
+      console.error("Error deleting quiz:", id, error);
+      throw error;
+    }
+  }
+  async getUserQuizFolders(userId) {
+    const userQuizzes = await db.select({ folder: quizzes.folder }).from(quizzes).where(eq(quizzes.userId, userId));
+    const folders = userQuizzes.map((q) => q.folder).filter((folder) => folder !== null && folder !== void 0).filter((folder, index2, arr) => arr.indexOf(folder) === index2);
+    return folders;
+  }
+  // Quiz attempt operations
+  async createQuizAttempt(attempt) {
+    const [result] = await db.insert(quizAttempts).values({
+      ...attempt,
+      answers: attempt.answers
+    }).returning();
+    return result;
+  }
+  async getQuizAttempts(quizId) {
+    return await db.select().from(quizAttempts).where(eq(quizAttempts.quizId, quizId));
+  }
+  async getUserQuizAttempts(userId) {
+    return await db.select().from(quizAttempts).where(eq(quizAttempts.userId, userId));
+  }
+  async getLatestQuizAttempt(quizId, userId) {
+    const [result] = await db.select().from(quizAttempts).where(and(eq(quizAttempts.quizId, quizId), eq(quizAttempts.userId, userId))).orderBy(desc(quizAttempts.completedAt)).limit(1);
+    return result;
   }
 };
 var storage = new DatabaseStorage();
@@ -446,14 +514,20 @@ async function setupAuth(app2) {
 var authenticateUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
+    console.log("Auth middleware - URL:", req.url);
+    console.log("Auth middleware - Auth header:", authHeader);
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log("Auth middleware - No valid auth header");
       return res.status(401).json({ message: "No authentication provided" });
     }
     const token = authHeader.split(" ")[1];
+    console.log("Auth middleware - Token length:", token.length);
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
     if (error || !user) {
+      console.log("Auth middleware - Token verification failed:", error);
       return res.status(401).json({ error: "Invalid token" });
     }
+    console.log("Auth middleware - User authenticated:", user.id);
     req.user = {
       id: user.id,
       email: user.email
@@ -651,6 +725,17 @@ async function registerRoutes(app2) {
       if (quiz.userId !== userId) {
         return res.status(403).json({ error: "Unauthorized access to quiz" });
       }
+      console.log("Quiz data for results:", {
+        quizId: quiz.id,
+        questionsCount: quiz.questions?.length,
+        mcqQuestions: quiz.questions?.filter((q) => q.type === "mcq").map((q) => ({
+          id: q.id,
+          type: q.type,
+          options: q.options,
+          optionsLength: q.options?.length,
+          answer: q.answer
+        }))
+      });
       res.json({
         quizId: quiz.id,
         questions: quiz.questions,
@@ -688,6 +773,159 @@ async function registerRoutes(app2) {
       });
     }
   });
+  app2.patch("/api/quizzes/:quizId", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        return res.status(404).json({ error: "Quiz not found" });
+      }
+      if (quiz.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized access to quiz" });
+      }
+      const validatedData = updateQuizSchema.parse(req.body);
+      const updatedQuiz = await storage.updateQuiz(quizId, validatedData);
+      res.json({
+        quizId: updatedQuiz.id,
+        name: updatedQuiz.name,
+        folder: updatedQuiz.folder,
+        tags: updatedQuiz.tags,
+        updatedAt: updatedQuiz.updatedAt
+      });
+    } catch (error) {
+      console.error("Update quiz error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to update quiz"
+      });
+    }
+  });
+  app2.delete("/api/quizzes/:quizId", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      console.log("Delete quiz request:", { quizId, userId });
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        console.log("Quiz not found:", quizId);
+        return res.status(404).json({ error: "Quiz not found" });
+      }
+      if (quiz.userId !== userId) {
+        console.log("Unauthorized access:", { quizUserId: quiz.userId, requestUserId: userId });
+        return res.status(403).json({ error: "Unauthorized access to quiz" });
+      }
+      console.log("Deleting quiz:", quizId);
+      await storage.deleteQuiz(quizId);
+      console.log("Quiz deleted successfully:", quizId);
+      res.json({ message: "Quiz deleted successfully" });
+    } catch (error) {
+      console.error("Delete quiz error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to delete quiz"
+      });
+    }
+  });
+  app2.get("/api/user/quiz-folders", authenticateUser, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const folders = await storage.getUserQuizFolders(userId);
+      res.json(folders);
+    } catch (error) {
+      console.error("Error fetching quiz folders:", error);
+      res.status(500).json({ message: "Failed to fetch quiz folders" });
+    }
+  });
+  app2.post("/api/quiz-attempts", authenticateUser, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      console.log("Creating quiz attempt for user:", userId);
+      console.log("Request body:", req.body);
+      console.log("Auth header:", req.headers.authorization);
+      const attemptData = {
+        userId,
+        ...req.body
+      };
+      console.log("Attempt data before validation:", attemptData);
+      const validatedData = insertQuizAttemptSchema.parse(attemptData);
+      console.log("Validated data:", validatedData);
+      const attempt = await storage.createQuizAttempt(validatedData);
+      console.log("Created attempt:", attempt);
+      res.json({
+        attemptId: attempt.id,
+        score: attempt.score,
+        totalQuestions: attempt.totalQuestions,
+        percentage: attempt.percentage,
+        completedAt: attempt.completedAt
+      });
+    } catch (error) {
+      console.error("Create quiz attempt error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to save quiz attempt"
+      });
+    }
+  });
+  app2.get("/api/quizzes/:quizId/attempts", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        return res.status(404).json({ error: "Quiz not found" });
+      }
+      if (quiz.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized access to quiz" });
+      }
+      const attempts = await storage.getQuizAttempts(quizId);
+      res.json(attempts);
+    } catch (error) {
+      console.error("Get quiz attempts error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to get quiz attempts"
+      });
+    }
+  });
+  app2.get("/api/quizzes/:quizId/latest-attempt", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      console.log("Getting latest attempt for quiz:", quizId, "user:", userId);
+      const quiz = await storage.getQuiz(quizId);
+      if (!quiz) {
+        console.log("Quiz not found:", quizId);
+        return res.status(404).json({ error: "Quiz not found" });
+      }
+      if (quiz.userId !== userId) {
+        console.log("User does not own quiz:", userId, "vs", quiz.userId);
+        return res.status(403).json({ error: "Unauthorized access to quiz" });
+      }
+      const attempt = await storage.getLatestQuizAttempt(quizId, userId);
+      console.log("Latest attempt found:", attempt);
+      if (!attempt) {
+        return res.status(404).json({ error: "No attempts found" });
+      }
+      res.json(attempt);
+    } catch (error) {
+      console.error("Get latest quiz attempt error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to get latest quiz attempt"
+      });
+    }
+  });
+  app2.get("/api/debug/quizzes/:quizId/attempts", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      console.log("Debug: Getting all attempts for quiz:", quizId, "user:", userId);
+      const attempts = await storage.getQuizAttempts(quizId);
+      console.log("All attempts for quiz:", attempts);
+      res.json({ quizId, userId, attempts });
+    } catch (error) {
+      console.error("Debug get attempts error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to get attempts"
+      });
+    }
+  });
   const httpServer = createServer(app2);
   return httpServer;
 }
@@ -720,7 +958,19 @@ var vite_config_default = defineConfig({
   root: path.resolve(import.meta.dirname, "client"),
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          router: ["wouter"],
+          ui: ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-select", "@radix-ui/react-toast"],
+          query: ["@tanstack/react-query"],
+          icons: ["lucide-react"]
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1e3
   },
   server: {
     fs: {

@@ -15,6 +15,20 @@
       "when": 1758981254189,
       "tag": "0001_short_albert_cleary",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1758992583355,
+      "tag": "0002_sparkling_garia",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1758993855509,
+      "tag": "0003_cloudy_princess_powerful",
+      "breakpoints": true
     }
   ]
 }

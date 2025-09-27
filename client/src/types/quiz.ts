@@ -23,6 +23,10 @@ export type QuizMeta = {
 
 export type Quiz = {
   quizId: string;
+  id?: string; // For compatibility with backend
+  name?: string;
+  folder?: string;
+  tags?: string[];
   questions: Question[];
   meta: QuizMeta;
 };
