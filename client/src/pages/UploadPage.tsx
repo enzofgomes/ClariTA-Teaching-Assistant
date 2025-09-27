@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { authenticatedFetch } from "@/lib/api";
 import { Uploader } from "@/components/Uploader";
 import { QuizConfig, type QuizConfig as QuizConfigType } from "@/components/QuizConfig";
-import { GraduationCap, Moon, Brain, FileText, Scale, FileCheck, ArrowLeft } from "lucide-react";
+import { GraduationCap, Brain, FileText, Scale, FileCheck, ArrowLeft } from "lucide-react";
 import type { Upload } from "@/types/quiz";
 
 export default function UploadPage() {
@@ -96,9 +96,6 @@ export default function UploadPage() {
                 Quiz Generator
               </span>
             </div>
-            <Button variant="ghost" size="icon" data-testid="button-dark-mode">
-              <Moon className="text-muted-foreground" />
-            </Button>
           </div>
         </div>
       </header>

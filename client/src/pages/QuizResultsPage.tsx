@@ -75,7 +75,7 @@ export default function QuizResultsPage() {
           <p className="text-gray-600 mb-4">
             The quiz or your attempt results could not be found.
           </p>
-          <Button onClick={() => setLocation("/dashboard")}>
+          <Button onClick={() => window.location.href = "/dashboard"}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Dashboard
           </Button>
@@ -106,7 +106,7 @@ export default function QuizResultsPage() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => setLocation("/dashboard")}
+                onClick={() => window.location.href = "/dashboard"}
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
@@ -299,7 +299,7 @@ export default function QuizResultsPage() {
             >
               Retake Quiz
             </Button>
-            <Button onClick={() => setLocation("/dashboard")}>
+            <Button onClick={() => window.location.href = "/dashboard"}>
               Back to Dashboard
             </Button>
           </div>
