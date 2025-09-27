@@ -56,7 +56,7 @@ export class DatabaseStorage implements IStorage {
   async createUpload(upload: InsertUpload): Promise<Upload> {
     const [result] = await db.insert(uploads).values({
       ...upload,
-      textByPage: upload.textByPage as any // Type assertion for JSONB
+      textByPage: upload.textByPage as any
     }).returning();
     return result;
   }
@@ -69,8 +69,8 @@ export class DatabaseStorage implements IStorage {
   async createQuiz(quiz: InsertQuiz): Promise<Quiz> {
     const [result] = await db.insert(quizzes).values({
       ...quiz,
-      questions: quiz.questions as any, // Type assertion for JSONB
-      meta: quiz.meta as any // Type assertion for JSONB
+      questions: quiz.questions as any,
+      meta: quiz.meta as any
     }).returning();
     return result;
   }
