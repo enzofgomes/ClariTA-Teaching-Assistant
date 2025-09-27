@@ -33,7 +33,7 @@ export const quizzes = pgTable("quizzes", {
 });
 
 // TypeScript types for quiz structure
-export type QuestionType = 'mcq' | 'tf' | 'short';
+export type QuestionType = 'mcq' | 'tf' | 'fill';
 
 export type Citation = {
   page: number;
@@ -48,14 +48,12 @@ export type Question = {
   answer: number | boolean | string;
   explanation: string;
   citations: Citation[];
-  confidence: number;
 };
 
 export type QuizMeta = {
   uploadId: string;
   createdAt: string;
   countsByType: Record<QuestionType, number>;
-  avgConfidence: number;
 };
 
 export const insertUploadSchema = createInsertSchema(uploads).omit({
