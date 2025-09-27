@@ -78,10 +78,12 @@ For each question, provide:
 - id: unique identifier (use random UUIDs)
 - type: one of "${enabledTypes.join('", "')}"
 - prompt: clear, varied question text (avoid repetitive phrasing)
-- options: array of 4 choices (MCQ only)
+- options: array of 4 choices (REQUIRED for all question types - use empty array [] for non-MCQ)
 - answer: correct option index (MCQ), boolean (T/F), or correct answer text (Fill)
 - explanation: 1-2 sentence explanation (max 200 chars)
 - citations: array of {page: number, snippet: string} (max 120 chars per snippet)
+
+CRITICAL: The "options" field is REQUIRED for all questions. For MCQ questions, provide exactly 4 options. For True/False and Fill-in-the-blank questions, provide an empty array [].
 
 FILL-IN-THE-BLANK SPECIFIC REQUIREMENTS:
 - Use "_____" or "______" to indicate blanks in the prompt
@@ -142,7 +144,7 @@ Ensure questions test understanding, not just memorization.`;
                     }
                   },
                 },
-                required: ["id", "type", "prompt", "answer", "explanation", "citations"]
+                required: ["id", "type", "prompt", "options", "answer", "explanation", "citations"]
               }
             }
           },
@@ -193,6 +195,44 @@ Ensure questions test understanding, not just memorization.`;
       const actual = countsByType[expected.type as QuestionType] || 0;
       if (Math.abs(actual - expected.count) > 1) {
         console.warn(`Question type ${expected.type}: expected ${expected.count}, got ${actual}`);
+      }
+    }
+
+    // Validate all questions have options field
+    for (const question of processedQuestions) {
+      if (!question.options || !Array.isArray(question.options)) {
+        throw new Error(`Question ${question.id} is missing options array`);
+      }
+    }
+
+    // Validate MCQ questions
+    const mcqQuestions = processedQuestions.filter(q => q.type === 'mcq');
+    for (const question of mcqQuestions) {
+      // Check if MCQ has exactly 4 options
+      if (!question.options || question.options.length !== 4) {
+        throw new Error(`MCQ question ${question.id} must have exactly 4 options, got ${question.options?.length || 0}`);
+      }
+      
+      // Check if answer is a valid index
+      if (typeof question.answer !== 'number' || question.answer < 0 || question.answer >= 4) {
+        throw new Error(`MCQ question ${question.id} answer must be a number between 0-3, got ${question.answer}`);
+      }
+      
+      // Check if options are not empty
+      for (let i = 0; i < question.options.length; i++) {
+        if (!question.options[i] || !question.options[i].trim()) {
+          throw new Error(`MCQ question ${question.id} option ${i} is empty`);
+        }
+      }
+    }
+
+    // Validate non-MCQ questions have empty options
+    const nonMcqQuestions = processedQuestions.filter(q => q.type !== 'mcq');
+    for (const question of nonMcqQuestions) {
+      if (!question.options || question.options.length !== 0) {
+        console.warn(`Non-MCQ question ${question.id} has options but should have empty array`);
+        // Don't throw error, just fix it
+        question.options = [];
       }
     }
 

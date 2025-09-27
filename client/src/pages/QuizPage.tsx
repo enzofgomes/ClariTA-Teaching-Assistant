@@ -211,7 +211,7 @@ export default function QuizPage() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  onClick={() => setLocation("/dashboard")}
+                  onClick={() => window.location.href = "/dashboard"}
                   data-testid="button-back"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -247,7 +247,7 @@ export default function QuizPage() {
                 <Button onClick={resetQuiz} variant="outline">
                   Retake Quiz
                 </Button>
-                <Button onClick={() => setLocation("/dashboard")}>
+                <Button onClick={() => window.location.href = "/dashboard"}>
                   Back to Dashboard
                 </Button>
               </div>
@@ -317,7 +317,7 @@ export default function QuizPage() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => setLocation("/dashboard")}
+                onClick={() => window.location.href = "/dashboard"}
                 data-testid="button-back"
               >
                 <ArrowLeft className="h-4 w-4" />

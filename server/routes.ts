@@ -441,6 +441,160 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user statistics endpoint (protected)
+  app.get('/api/user/statistics', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      
+      console.log('Getting user statistics for:', userId);
+      
+      // Get all user quizzes and attempts
+      const [quizzes, attempts] = await Promise.all([
+        storage.getUserQuizzes(userId),
+        storage.getUserQuizAttempts(userId)
+      ]);
+      
+      console.log('Statistics debug:', {
+        userId,
+        quizzesCount: quizzes.length,
+        attemptsCount: attempts.length,
+        quizzes: quizzes.map(q => ({ id: q.id, name: q.name, createdAt: q.createdAt })),
+        attempts: attempts.map(a => ({ id: a.id, quizId: a.quizId, score: a.score, completedAt: a.completedAt }))
+      });
+      
+      // Calculate statistics
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      
+      // Quizzes completed this month
+      const quizzesCompletedThisMonth = attempts.filter(attempt => 
+        new Date(attempt.completedAt) >= startOfMonth
+      ).length;
+      
+      
+      // Calculate streaks (consecutive days with quiz completions)
+      const sortedAttempts = attempts.sort((a, b) => 
+        new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()
+      );
+      
+      let currentStreak = 0;
+      let maxStreak = 0;
+      let tempStreak = 0;
+      let lastDate: Date | null = null;
+      
+      for (const attempt of sortedAttempts) {
+        const attemptDate = new Date(attempt.completedAt);
+        const attemptDateStr = attemptDate.toDateString();
+        
+        if (lastDate === null) {
+          tempStreak = 1;
+          lastDate = attemptDate;
+        } else {
+          const lastDateStr = lastDate.toDateString();
+          const daysDiff = Math.floor((attemptDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysDiff === 1) {
+            // Consecutive day
+            tempStreak++;
+          } else if (daysDiff === 0) {
+            // Same day, don't break streak
+            continue;
+          } else {
+            // Streak broken
+            maxStreak = Math.max(maxStreak, tempStreak);
+            tempStreak = 1;
+          }
+          lastDate = attemptDate;
+        }
+      }
+      
+      maxStreak = Math.max(maxStreak, tempStreak);
+      
+      // Calculate current streak (from most recent attempt)
+      if (sortedAttempts.length > 0) {
+        const mostRecentAttempt = sortedAttempts[sortedAttempts.length - 1];
+        const mostRecentDate = new Date(mostRecentAttempt.completedAt);
+        const daysSinceLastAttempt = Math.floor((now.getTime() - mostRecentDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysSinceLastAttempt <= 1) {
+          // Check if there are consecutive days leading up to the most recent attempt
+          currentStreak = 1;
+          for (let i = sortedAttempts.length - 2; i >= 0; i--) {
+            const currentAttemptDate = new Date(sortedAttempts[i].completedAt);
+            const nextAttemptDate = new Date(sortedAttempts[i + 1].completedAt);
+            const daysDiff = Math.floor((nextAttemptDate.getTime() - currentAttemptDate.getTime()) / (1000 * 60 * 60 * 24));
+            
+            if (daysDiff === 1) {
+              currentStreak++;
+            } else {
+              break;
+            }
+          }
+        }
+      }
+      
+      // Accuracy rate (correct vs incorrect answers)
+      const totalAnswers = attempts.reduce((sum, attempt) => sum + attempt.totalQuestions, 0);
+      const correctAnswers = attempts.reduce((sum, attempt) => sum + attempt.score, 0);
+      const accuracyRate = totalAnswers > 0 ? (correctAnswers / totalAnswers) * 100 : 0;
+      
+      // Average score percentage
+      const averageScore = attempts.length > 0 
+        ? attempts.reduce((sum, attempt) => sum + attempt.percentage, 0) / attempts.length 
+        : 0;
+      
+      // Total quizzes taken
+      const totalQuizzesTaken = attempts.length;
+      
+      const statistics = {
+        quizzesCompletedThisMonth,
+        currentStreak,
+        maxStreak,
+        accuracyRate: Math.round(accuracyRate * 100) / 100,
+        averageScore: Math.round(averageScore * 100) / 100,
+        totalQuizzesTaken,
+        totalQuizzesGenerated: quizzes.length
+      };
+      
+      console.log('Calculated statistics:', statistics);
+      res.json(statistics);
+      
+    } catch (error) {
+      console.error('Get user statistics error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to get user statistics' 
+      });
+    }
+  });
+
+  // Debug endpoint to check user data
+  app.get('/api/debug/user-data', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      
+      console.log('Debug: Getting user data for:', userId);
+      
+      const [quizzes, attempts] = await Promise.all([
+        storage.getUserQuizzes(userId),
+        storage.getUserQuizAttempts(userId)
+      ]);
+      
+      res.json({
+        userId,
+        quizzesCount: quizzes.length,
+        attemptsCount: attempts.length,
+        quizzes: quizzes.map(q => ({ id: q.id, name: q.name, createdAt: q.createdAt })),
+        attempts: attempts.map(a => ({ id: a.id, quizId: a.quizId, score: a.score, completedAt: a.completedAt }))
+      });
+
+    } catch (error) {
+      console.error('Debug user data error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to get user data' 
+      });
+    }
+  });
+
   // Debug endpoint to check all attempts for a quiz
   app.get('/api/debug/quizzes/:quizId/attempts', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {

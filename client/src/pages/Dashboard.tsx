@@ -9,10 +9,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { FileText, Brain, Plus, LogOut, User, Search, Edit, Trash2, Folder, Tag, MoreHorizontal } from "lucide-react";
+import { FileText, Brain, Plus, LogOut, User, Search, Edit, Trash2, Folder, Tag, MoreHorizontal, TrendingUp, Target, BarChart3, Calendar, CheckCircle, Zap, Award, Trophy, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedFetch } from "@/lib/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { User as UserType } from "@shared/schema";
 
 interface Upload {
@@ -35,6 +35,16 @@ interface Quiz {
     countsByType: Record<string, number>;
   };
   hasAttempts?: boolean; // Will be populated by checking for attempts
+}
+
+interface UserStatistics {
+  quizzesCompletedThisMonth: number;
+  currentStreak: number;
+  maxStreak: number;
+  accuracyRate: number;
+  averageScore: number;
+  totalQuizzesTaken: number;
+  totalQuizzesGenerated: number;
 }
 
 export default function Dashboard() {
@@ -91,6 +101,38 @@ export default function Dashboard() {
     queryFn: async () => {
       const response = await authenticatedFetch("/api/user/quiz-folders");
       return response.json();
+    },
+  });
+
+  const { data: userStats, isLoading: statsLoading, error: statsError } = useQuery<UserStatistics>({
+    queryKey: ["/api/user/statistics"],
+    retry: false,
+    refetchOnWindowFocus: true,
+    queryFn: async () => {
+      console.log('Fetching user statistics...');
+      const response = await authenticatedFetch("/api/user/statistics");
+      console.log('Statistics response status:', response.status);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Statistics API error:', errorText);
+        throw new Error(`Failed to fetch statistics: ${response.status} - ${errorText}`);
+      }
+      const data = await response.json();
+      console.log('Statistics data received:', data);
+      return data;
+    },
+  });
+
+  // Debug query to check user data
+  const { data: debugData } = useQuery({
+    queryKey: ["/api/debug/user-data"],
+    retry: false,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const response = await authenticatedFetch("/api/debug/user-data");
+      const data = await response.json();
+      console.log('Debug user data:', data);
+      return data;
     },
   });
 
@@ -178,6 +220,7 @@ export default function Dashboard() {
     setEditForm({ name: "", folder: "", tags: "" });
   };
 
+
   // Filter quizzes based on search and folder
   const filteredQuizzes = quizzes?.filter(quiz => {
     const matchesSearch = !searchTerm || 
@@ -262,26 +305,123 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Stats */}
+            {/* Learning Statistics */}
             <Card className="mt-6">
               <CardHeader>
-                <CardTitle>Your Statistics</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Learning Statistics
+                </CardTitle>
+                <CardDescription>
+                  Your quiz performance and progress metrics
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-300">Total Uploads</span>
-                    <span className="font-semibold" data-testid="text-upload-count">
-                      {uploads?.length || 0}
-                    </span>
+                {statsLoading ? (
+                  <div className="text-center py-4 text-gray-500">Loading statistics...</div>
+                ) : statsError ? (
+                  <div className="text-center py-4 text-red-500">
+                    <p>Error loading statistics</p>
+                    <p className="text-xs text-gray-400 mt-1">{statsError.message}</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-300">Total Quizzes</span>
-                    <span className="font-semibold" data-testid="text-quiz-count">
-                      {quizzes?.length || 0}
-                    </span>
+                ) : userStats ? (
+                  <div className="space-y-6">
+                    {/* Main Stats Grid */}
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                        <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          {userStats.quizzesCompletedThisMonth}
+                        </div>
+                        <div className="text-xs text-blue-600 dark:text-blue-400">This Month</div>
+                      </div>
+                    </div>
+
+                    {/* Streaks */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <Zap className="h-4 w-4" />
+                        Streaks
+                      </h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded">
+                          <div className="font-semibold text-orange-600 dark:text-orange-400">
+                            {userStats.currentStreak}
+                          </div>
+                          <div className="text-xs text-orange-600 dark:text-orange-400">Current</div>
+                        </div>
+                        <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded">
+                          <div className="font-semibold text-purple-600 dark:text-purple-400">
+                            {userStats.maxStreak}
+                          </div>
+                          <div className="text-xs text-purple-600 dark:text-purple-400">Best</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Performance Metrics */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <Award className="h-4 w-4" />
+                        Performance
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 dark:text-gray-400">Accuracy Rate</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-green-500 h-2 rounded-full" 
+                                style={{ width: `${Math.min(userStats.accuracyRate, 100)}%` }}
+                              ></div>
+                            </div>
+                            <span className="font-medium w-12 text-right">{userStats.accuracyRate}%</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 dark:text-gray-400">Average Score</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-blue-500 h-2 rounded-full" 
+                                style={{ width: `${Math.min(userStats.averageScore, 100)}%` }}
+                              ></div>
+                            </div>
+                            <span className="font-medium w-12 text-right">{userStats.averageScore}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Total Activity */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <Trophy className="h-4 w-4" />
+                        Total Activity
+                      </h4>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded">
+                          <div className="font-semibold text-indigo-600 dark:text-indigo-400">
+                            {userStats.totalQuizzesTaken}
+                          </div>
+                          <div className="text-xs text-indigo-600 dark:text-indigo-400">Quizzes Taken</div>
+                        </div>
+                        <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                          <div className="font-semibold text-gray-600 dark:text-gray-400">
+                            {userStats.totalQuizzesGenerated}
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">Quizzes Generated</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="text-center py-4 text-gray-500">
+                    <BookOpen className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <p>No statistics available yet</p>
+                    <p className="text-xs text-gray-400 mt-1">Complete some quizzes to see your progress</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -292,10 +432,7 @@ export default function Dashboard() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Quiz Management</CardTitle>
-                    <CardDescription>
-                      Manage your generated quizzes with folders, tags, and search
-                    </CardDescription>
+                    <CardTitle>Quiz Management</CardTitle><br></br>
                   </div>
                 </div>
                 
