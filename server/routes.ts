@@ -6,7 +6,9 @@ import { parsePDF } from "./services/pdf";
 import { generateQuiz } from "./services/gemini";
 import { insertUploadSchema, insertQuizSchema } from "@shared/schema";
 import { z } from "zod";
-import { setupAuth, isAuthenticated } from "./supabaseAuth";
+import { setupAuth } from "./supabaseAuth";
+import { authenticateUser, AuthenticatedRequest } from "./middleware/auth";
+import authRoutes from "./routes/auth";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -26,8 +28,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware setup
   await setupAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', async (req: any, res) => {
+  // Mount auth routes
+  app.use('/api/auth', authRoutes);
+
+  // Legacy auth route for backward compatibility
+  app.get('/api/auth/user', async (req: AuthenticatedRequest, res) => {
     try {
       // Check if user is authenticated
       if (!req.user) {
@@ -52,7 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user's uploads
-  app.get('/api/user/uploads', isAuthenticated, async (req: any, res) => {
+  app.get('/api/user/uploads', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
       const userId = req.user.id;
       const uploads = await storage.getUserUploads(userId);
@@ -64,7 +69,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user's quizzes
-  app.get('/api/user/quizzes', isAuthenticated, async (req: any, res) => {
+  app.get('/api/user/quizzes', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
       const userId = req.user.id;
       const quizzes = await storage.getUserQuizzes(userId);
@@ -76,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Upload PDF endpoint (protected)
-  app.post('/api/upload', isAuthenticated, upload.single('file'), async (req: any, res) => {
+  app.post('/api/upload', authenticateUser, upload.single('file'), async (req: AuthenticatedRequest, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
@@ -118,7 +123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Generate quiz endpoint (protected)
-  app.post('/api/quizzes', isAuthenticated, async (req: any, res) => {
+  app.post('/api/quizzes', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
       const { uploadId, numQuestions = 10 } = req.body;
 
@@ -170,7 +175,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get quiz endpoint (protected)
-  app.get('/api/quizzes/:quizId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/quizzes/:quizId', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
       const { quizId } = req.params;
       const userId = req.user.id;
@@ -200,7 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get upload endpoint (protected)
-  app.get('/api/uploads/:uploadId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/uploads/:uploadId', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
       const { uploadId } = req.params;
       const userId = req.user.id;
