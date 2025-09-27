@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import AuthForm from "@/components/AuthForm";
+import LandingPage from "@/pages/LandingPage";
 import UploadPage from "@/pages/UploadPage";
 import QuizPage from "@/pages/QuizPage";
 import Dashboard from "@/pages/Dashboard";
@@ -23,11 +24,11 @@ function Router() {
 
   return (
     <Switch>
-      {!user ? (
-        <Route path="/" component={() => <AuthForm />} />
-      ) : (
+      <Route path="/" component={LandingPage} />
+      <Route path="/login" component={() => <AuthForm />} />
+      {user && (
         <>
-          <Route path="/" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/upload" component={UploadPage} />
           <Route path="/quiz/:quizId" component={QuizPage} />
         </>

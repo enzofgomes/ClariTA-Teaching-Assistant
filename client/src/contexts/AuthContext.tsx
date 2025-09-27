@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { supabase } from '../lib/supabase';
 import { User, Session } from '@supabase/supabase-js';
 import { AuthUser } from '@shared/schema';
+import { useLocation } from 'wouter';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     // Get initial session
@@ -131,6 +133,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setLocation('/');
   };
 
   const value = {
