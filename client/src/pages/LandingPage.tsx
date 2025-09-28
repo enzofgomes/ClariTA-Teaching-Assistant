@@ -12,22 +12,22 @@ export default function HomePage() {
     {
       icon: FileText,
       title: "Upload PDFs",
-      description: "Simply drag and drop your lecture slides. We support PDF files up to 20MB with intelligent content extraction."
+      description: "Simply drag and drop your lecture slides! We support PDF files up to 20MB with intelligent content extraction. It's super easy!"
     },
     {
       icon: Zap,
       title: "AI-Powered Generation",
-      description: "Our advanced AI analyzes your content and creates comprehensive quizzes with multiple choice, true/false, and short answer questions."
+      description: "Our super smart AI analyzes your content and creates amazing quizzes with multiple choice, true/false, and short answer questions!"
     },
     {
       icon: Brain,
       title: "Smart Learning",
-      description: "Get personalized feedback and explanations for each answer to enhance your understanding and retention."
+      description: "Get personalized feedback and explanations for each answer to boost your understanding and memory! You'll learn faster!"
     },
     {
       icon: Users,
       title: "Track & Share",
-      description: "Keep track of your quiz history, monitor progress, and share quizzes with classmates or students."
+      description: "Keep track of your quiz history, monitor your awesome progress, and share quizzes with friends or classmates!"
     }
   ];
 
@@ -35,17 +35,17 @@ export default function HomePage() {
     {
       icon: CheckCircle,
       title: "Instant Results",
-      description: "Generate quizzes in seconds, not hours. Our AI works at lightning speed to create comprehensive assessments."
+      description: "Generate quizzes in seconds, not hours! Our AI works at lightning speed to create amazing assessments. Super fast!"
     },
     {
       icon: Star,
       title: "High Quality",
-      description: "Advanced AI ensures questions are relevant, challenging, and aligned with your learning objectives."
+      description: "Advanced AI ensures questions are super relevant, challenging, and perfectly aligned with your learning goals!"
     },
     {
       icon: Target,
       title: "Personalized Learning",
-      description: "Adaptive questioning helps identify knowledge gaps and reinforces key concepts for better retention."
+      description: "Smart questioning helps find knowledge gaps and reinforces key concepts for better memory! You'll ace it!"
     }
   ];
 
@@ -53,29 +53,34 @@ export default function HomePage() {
     <div className="min-h-screen">
       <Header />
 
-      {/* Hero Section with Tufts Blue Gradient */}
+      {/* Hero Section with Desert Mountains */}
       <section 
         className="py-20 relative overflow-hidden"
         style={{ 
-          background: 'linear-gradient(135deg, #1A8FE3 0%, #2563EB 100%)'
+          background: 'linear-gradient(180deg, #f4e4bc 0%, #e8d5a3 30%, #d4c4a8 60%, #c4b59a 100%)'
         }}
       >
-        {/* Subtle wave pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="white"/>
-            <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" fill="white"/>
+        {/* Desert Sand Dunes */}
+        <div className="absolute inset-0 opacity-20">
+          <svg className="w-full h-full" viewBox="0 0 1200 400" preserveAspectRatio="none">
+            {/* Tall sand dunes - background */}
+            <path d="M0,300 Q200,220 400,240 Q600,200 800,230 Q1000,180 1200,210 L1200,400 L0,400 Z" fill="#8b7355"/>
+            {/* Smaller sand dunes - foreground */}
+            <path d="M0,350 Q300,340 600,345 Q900,335 1200,340 L1200,400 L0,400 Z" fill="#b89d6b"/>
           </svg>
         </div>
+        
+        {/* Subtle overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10"></div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ color: '#6b2d16' }}>
               Transform Your Lecture Slides Into 
-              <span className="text-yellow-300"> Interactive Quizzes</span>
+              <span style={{ color: '#dc5817' }}> Interactive Quizzes</span>
             </h1>
 
-            <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed text-white/90">
+            <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>
               Upload your PDF lecture slides and instantly generate personalized quizzes powered by AI. 
               Perfect for students, educators, and professionals who want to test their knowledge and enhance their learning experience.
             </p>
@@ -103,61 +108,54 @@ export default function HomePage() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2 text-yellow-300">1000+</div>
-                <div className="text-white/80">Quizzes Generated</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#dc5817' }}>1000+</div>
+                <div style={{ color: '#6b2d16' }}>Quizzes Generated</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2 text-yellow-300">670+</div>
-                <div className="text-white/80">Happy Students</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#dc5817' }}>670+</div>
+                <div style={{ color: '#6b2d16' }}>Happy Students</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2 text-yellow-300">95%</div>
-                <div className="text-white/80">Accuracy Rate</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#dc5817' }}>95%</div>
+                <div style={{ color: '#6b2d16' }}>Accuracy Rate</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section with Light Gray and Subtle Texture */}
+      {/* How It Works Section with Warm Cream Background */}
       <section 
         id="how-it-works" 
         className="py-20 relative"
-        style={{ backgroundColor: '#F9FAFB' }}
+        style={{ backgroundColor: '#fef7e0' }}
       >
-        {/* Subtle geometric pattern */}
+        {/* Subtle pattern */}
         <div className="absolute top-0 right-0 w-64 h-64 opacity-5">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <defs>
-              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1A8FE3" strokeWidth="1"/>
-              </pattern>
-            </defs>
-            <rect width="200" height="200" fill="url(#grid)" />
-          </svg>
+          <div className="w-full h-full bg-gradient-to-br from-transparent via-orange-200/20 to-transparent rounded-full"></div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: '#1F2937' }}>
+            <h2 className="text-4xl font-bold mb-4" style={{ color: '#6b2d16' }}>
               How ClariTA Helps You Learn
             </h2>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#1F2937' }}>
-              Our AI-powered platform makes studying more effective and engaging than ever before
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#6b2d16' }}>
+              Our AI-powered platform makes studying more effective and engaging than ever before!
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
+              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-105">
                 <CardHeader>
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: index % 3 === 0 ? '#1A8FE3' : index % 3 === 1 ? '#F17105' : '#AF16B4' }}>
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: index % 3 === 0 ? '#de8318' : index % 3 === 1 ? '#dc5817' : '#6b2d16' }}>
                     <feature.icon className="h-8 w-8 text-white" />
                   </div>
-                  <CardTitle className="text-xl" style={{ color: '#1F2937' }}>{feature.title}</CardTitle>
+                  <CardTitle className="text-xl" style={{ color: '#6b2d16' }}>{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription style={{ color: '#1F2937' }}>
+                  <CardDescription style={{ color: '#6b2d16' }}>
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -167,40 +165,38 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Benefits Section with Soft Lavender Pink Tint */}
+      {/* Benefits Section with Warm Cream Background */}
       <section 
-        className="py-20 bg-white relative"
-        style={{ 
-          background: 'linear-gradient(135deg, rgba(255, 194, 226, 0.1) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 194, 226, 0.05) 100%)'
-        }}
+        className="py-20 relative"
+        style={{ backgroundColor: '#fef7e0' }}
       >
-        {/* Soft blob shapes */}
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full opacity-10" style={{ backgroundColor: '#FFC2E2' }}></div>
-        <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full opacity-10" style={{ backgroundColor: '#FFC2E2' }}></div>
+        {/* Subtle blob shapes */}
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full opacity-20" style={{ backgroundColor: '#f5e2aa' }}></div>
+        <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full opacity-20" style={{ backgroundColor: '#f5e2aa' }}></div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: '#F17105' }}>
+            <h2 className="text-4xl font-bold mb-4" style={{ color: '#dc5817' }}>
               Why Choose ClariTA?
             </h2>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#1F2937' }}>
-              Experience the future of personalized learning with our cutting-edge AI technology
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#6b2d16' }}>
+              Experience the future of personalized learning with our cutting-edge AI technology!
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-105">
                 <CardContent className="p-8">
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#AF16B4' }}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#de8318' }}>
                       <benefit.icon className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-3" style={{ color: '#1F2937' }}>
+                      <h3 className="text-xl font-semibold mb-3" style={{ color: '#6b2d16' }}>
                         {benefit.title}
                       </h3>
-                      <p className="leading-relaxed" style={{ color: '#1F2937' }}>
+                      <p className="leading-relaxed" style={{ color: '#6b2d16' }}>
                         {benefit.description}
                       </p>
                     </div>
@@ -212,11 +208,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section with Pumpkin to Saffron Gradient */}
+      {/* CTA Section with Warm Gradient Background */}
       <section 
         className="py-20 relative overflow-hidden"
         style={{ 
-          background: 'linear-gradient(135deg, #F17105 0%, #E6C229 100%)'
+          background: 'linear-gradient(135deg, #fef7e0 0%, #f5e2aa 50%, #fef7e0 100%)'
         }}
       >
         {/* Subtle pattern overlay */}
@@ -226,39 +222,31 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold mb-4 text-white">
+            <h2 className="text-4xl font-bold mb-4" style={{ color: '#6b2d16' }}>
               Ready to Transform Your Learning?
             </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto text-white/90">
-              Join thousands of students and educators who are already using ClariTA to enhance their learning experience. 
+            <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: '#6b2d16' }}>
+              Join thousands of students and educators who are already using ClariTA to enhance their learning experience! 
               Start generating quizzes from your lecture slides today!
             </p>
             <Button 
               size="lg" 
               onClick={handleGetStarted}
-              className="text-lg px-8 py-4 text-white hover:opacity-90 bg-white/20 border-2 border-white hover:bg-white hover:text-orange-600 transition-all duration-300"
+              className="text-lg px-8 py-4 text-white hover:opacity-90 transition-all duration-300 hover:scale-105"
+              style={{ backgroundColor: '#de8318' }}
             >
-              Get Started Free
+              Get Started Free!
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Footer with Tufts Blue and Abstract Educational Shapes */}
+      {/* Footer with Warm Orange and Educational Shapes */}
       <footer 
         className="relative overflow-hidden"
-        style={{ backgroundColor: '#1A8FE3' }}
+        style={{ backgroundColor: '#de8318' }}
       >
-        {/* Abstract educational shapes */}
-        <div className="absolute inset-0 opacity-10">
-          <BookOpen className="absolute top-8 left-16 w-8 h-8 text-white" />
-          <Lightbulb className="absolute top-12 right-20 w-6 h-6 text-white" />
-          <BarChart3 className="absolute bottom-8 left-32 w-7 h-7 text-white" />
-          <Brain className="absolute bottom-12 right-16 w-6 h-6 text-white" />
-          <div className="absolute top-20 right-1/4 w-4 h-4 rounded-full bg-white"></div>
-          <div className="absolute bottom-20 left-1/4 w-3 h-3 rounded-full bg-white"></div>
-        </div>
 
         <div className="container mx-auto px-4 py-8 relative z-10">
           <div className="text-center text-white">
@@ -266,7 +254,7 @@ export default function HomePage() {
               <Brain className="h-6 w-6 text-white" />
               <span className="text-lg font-semibold">ClariTA</span>
             </div>
-            <p>&copy; 2025 ClariTA. Transforming education with AI.</p>
+            <p>&copy; 2025 ClariTA. Transforming education with AI!</p>
             <p className="text-sm mt-2">Made with ❤️ by Enzo, Angelica, Fabianne, and Veronica</p>
           </div>
         </div>
