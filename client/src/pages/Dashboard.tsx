@@ -335,96 +335,111 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-6">
-                    {/* Main Stats Grid */}
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                        <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                          {userStats.quizzesCompletedThisMonth}
-                        </div>
-                        <div className="text-xs text-blue-600 dark:text-blue-400">This Month</div>
-                      </div>
+                  {statsLoading ? (
+                    <div className="text-center py-4 text-gray-500">Loading statistics...</div>
+                  ) : statsError ? (
+                    <div className="text-center py-4 text-red-500">
+                      <p>Error loading statistics</p>
+                      <p className="text-xs text-gray-400 mt-1">{statsError.message}</p>
                     </div>
-
-                    {/* Streaks */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Zap className="h-4 w-4" />
-                        Streaks
-                      </h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded">
-                          <div className="font-semibold text-orange-600 dark:text-orange-400">
-                            {userStats.currentStreak}
+                  ) : userStats ? (
+                    <div className="space-y-6">
+                      {/* Main Stats Grid */}
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                          <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            {userStats.quizzesCompletedThisMonth}
                           </div>
-                          <div className="text-xs text-orange-600 dark:text-orange-400">Current</div>
-                        </div>
-                        <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded">
-                          <div className="font-semibold text-purple-600 dark:text-purple-400">
-                            {userStats.maxStreak}
-                          </div>
-                          <div className="text-xs text-purple-600 dark:text-purple-400">Best</div>
+                          <div className="text-xs text-blue-600 dark:text-blue-400">This Month</div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Performance Metrics */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Award className="h-4 w-4" />
-                        Performance
-                      </h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 dark:text-gray-400">Accuracy Rate</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div 
-                                className="bg-green-500 h-2 rounded-full" 
-                                style={{ width: `${Math.min(userStats.accuracyRate, 100)}%` }}
-                              ></div>
+                      {/* Streaks */}
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <Zap className="h-4 w-4" />
+                          Streaks
+                        </h4>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded">
+                            <div className="font-semibold text-orange-600 dark:text-orange-400">
+                              {userStats.currentStreak}
                             </div>
-                            <span className="font-medium w-12 text-right">{userStats.accuracyRate}%</span>
+                            <div className="text-xs text-orange-600 dark:text-orange-400">Current</div>
                           </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 dark:text-gray-400">Average Score</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div 
-                                className="bg-blue-500 h-2 rounded-full" 
-                                style={{ width: `${Math.min(userStats.averageScore, 100)}%` }}
-                              ></div>
+                          <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded">
+                            <div className="font-semibold text-purple-600 dark:text-purple-400">
+                              {userStats.maxStreak}
                             </div>
-                            <span className="font-medium w-12 text-right">{userStats.averageScore}%</span>
+                            <div className="text-xs text-purple-600 dark:text-purple-400">Best</div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Total Activity */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Trophy className="h-4 w-4" />
-                        Total Activity
-                      </h4>
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded">
-                          <div className="font-semibold text-indigo-600 dark:text-indigo-400">
-                            {userStats.totalQuizzesTaken}
+                      {/* Performance Metrics */}
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <Award className="h-4 w-4" />
+                          Performance
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600 dark:text-gray-400">Accuracy Rate</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className="bg-green-500 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(userStats.accuracyRate, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="font-medium w-12 text-right">{userStats.accuracyRate}%</span>
+                            </div>
                           </div>
-                          <div className="text-xs text-indigo-600 dark:text-indigo-400">Quizzes Taken</div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600 dark:text-gray-400">Average Score</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-500 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(userStats.averageScore, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="font-medium w-12 text-right">{userStats.averageScore}%</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
-                          <div className="font-semibold text-gray-600 dark:text-gray-400">
-                            {userStats.totalQuizzesGenerated}
+                      </div>
+
+                      {/* Total Activity */}
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <Trophy className="h-4 w-4" />
+                          Total Activity
+                        </h4>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded">
+                            <div className="font-semibold text-indigo-600 dark:text-indigo-400">
+                              {userStats.totalQuizzesTaken}
+                            </div>
+                            <div className="text-xs text-indigo-600 dark:text-indigo-400">Quizzes Taken</div>
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">Quizzes Generated</div>
+                          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                            <div className="font-semibold text-gray-600 dark:text-gray-400">
+                              {userStats.totalQuizzesGenerated}
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400">Quizzes Generated</div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-center py-4 text-gray-500">
+                      <BookOpen className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <p>No statistics available yet</p>
+                      <p className="text-xs text-gray-400 mt-1">Complete some quizzes to see your progress</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 

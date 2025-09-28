@@ -4,28 +4,23 @@ import { Brain, Menu, X, Users, Info, Sparkles, Heart, Star, Lightbulb, Target }
 import Logo from "./Logo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const teamMembers = [
   {
     name: "Enzo Gomes",
-    description: "Bachelor of Science in Information Technology at Florida International University | Junior Year | First time Hacker",
-    initial: "E"
+    description: "Bachelor of Science in Information Technology at Florida International University | Junior Year | First time Hacker"
   },
   {
     name: "Angelica Pinza", 
-    description: "Associate of Arts in Computer Science at Miami Dade College | Sophomore Year | First time Hacker",
-    initial: "A"
+    description: "Associate of Arts in Computer Science at Miami Dade College | Sophomore Year | First time Hacker"
   },
   {
     name: "Fabianne Olmedo",
-    description: "Bachelor of Science in Computer Science at Florida International University | Junior Year | First time Hacker",
-    initial: "F"
+    description: "Bachelor of Science in Computer Science at Florida International University | Junior Year | First time Hacker"
   },
   {
     name: "Veronica Rojas",
-    description: "Associate of Arts in Computer Science at Miami Dade College | Sophomore Year | First time Hacker",
-    initial: "V"
+    description: "Associate of Arts in Computer Science at Miami Dade College | Sophomore Year | First time Hacker"
   }
 
 ];
@@ -105,14 +100,9 @@ export default function Header() {
                     <Card key={index} className="border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-300">
                       <CardContent className="p-6">
                         <div className="flex items-start space-x-4">
-                          <Avatar className="h-12 w-12">
-                            <AvatarFallback 
-                              className="font-semibold text-white"
-                              style={{ backgroundColor: index % 3 === 0 ? '#de8318' : index % 3 === 1 ? '#dc5817' : '#6b2d16' }}
-                            >
-                              {member.initial}
-                            </AvatarFallback>
-                          </Avatar>
+                          <div className="h-12 w-12 flex-shrink-0">
+                            <Logo size="sm" />
+                          </div>
                           <div className="flex-1">
                             <h3 className="font-semibold mb-2" style={{ color: '#6b2d16' }}>
                               {member.name}
@@ -202,11 +192,9 @@ export default function Header() {
                       <Card key={index} className="border-0 shadow-sm">
                         <CardContent className="p-6">
                           <div className="flex items-start space-x-4">
-                            <Avatar className="h-12 w-12">
-                              <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
-                                {member.initial}
-                              </AvatarFallback>
-                            </Avatar>
+                            <div className="h-12 w-12 flex-shrink-0">
+                              <Logo size="sm" />
+                            </div>
                             <div className="flex-1">
                               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                                 {member.name}
