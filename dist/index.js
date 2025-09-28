@@ -70,7 +70,9 @@ var insertQuizSchema = createInsertSchema(quizzes).omit({
 var updateQuizSchema = createInsertSchema(quizzes).pick({
   name: true,
   folder: true,
-  tags: true
+  tags: true,
+  questions: true,
+  meta: true
 }).partial();
 var insertQuizAttemptSchema = createInsertSchema(quizAttempts).omit({
   id: true,
@@ -130,11 +132,17 @@ var DatabaseStorage = class {
     return await db.select().from(quizzes).where(eq(quizzes.uploadId, uploadId));
   }
   async updateQuiz(id, updates) {
-    const [result] = await db.update(quizzes).set({
-      ...updates,
-      tags: updates.tags,
+    const updateData = {
       updatedAt: /* @__PURE__ */ new Date()
-    }).where(eq(quizzes.id, id)).returning();
+    };
+    if (updates.name !== void 0) updateData.name = updates.name;
+    if (updates.folder !== void 0) updateData.folder = updates.folder;
+    if (updates.tags !== void 0) updateData.tags = updates.tags;
+    if (updates.questions !== void 0) updateData.questions = updates.questions;
+    if (updates.meta !== void 0) updateData.meta = updates.meta;
+    console.log("updateQuiz called with:", { id, updateData });
+    const [result] = await db.update(quizzes).set(updateData).where(eq(quizzes.id, id)).returning();
+    console.log("updateQuiz result:", result);
     return result;
   }
   async deleteQuiz(id) {
@@ -270,10 +278,12 @@ For each question, provide:
 - id: unique identifier (use random UUIDs)
 - type: one of "${enabledTypes.join('", "')}"
 - prompt: clear, varied question text (avoid repetitive phrasing)
-- options: array of 4 choices (MCQ only)
+- options: array of 4 choices (REQUIRED for all question types - use empty array [] for non-MCQ)
 - answer: correct option index (MCQ), boolean (T/F), or correct answer text (Fill)
 - explanation: 1-2 sentence explanation (max 200 chars)
 - citations: array of {page: number, snippet: string} (max 120 chars per snippet)
+
+CRITICAL: The "options" field is REQUIRED for all questions. For MCQ questions, provide exactly 4 options. For True/False and Fill-in-the-blank questions, provide an empty array [].
 
 FILL-IN-THE-BLANK SPECIFIC REQUIREMENTS:
 - Use "_____" or "______" to indicate blanks in the prompt
@@ -334,7 +344,7 @@ REQUEST ID: ${Math.random().toString(36).substring(2, 15)}`;
                     }
                   }
                 },
-                required: ["id", "type", "prompt", "answer", "explanation", "citations"]
+                required: ["id", "type", "prompt", "options", "answer", "explanation", "citations"]
               }
             }
           },
@@ -371,6 +381,32 @@ REQUEST ID: ${Math.random().toString(36).substring(2, 15)}`;
       const actual = countsByType[expected.type] || 0;
       if (Math.abs(actual - expected.count) > 1) {
         console.warn(`Question type ${expected.type}: expected ${expected.count}, got ${actual}`);
+      }
+    }
+    for (const question of processedQuestions) {
+      if (!question.options || !Array.isArray(question.options)) {
+        throw new Error(`Question ${question.id} is missing options array`);
+      }
+    }
+    const mcqQuestions = processedQuestions.filter((q) => q.type === "mcq");
+    for (const question of mcqQuestions) {
+      if (!question.options || question.options.length !== 4) {
+        throw new Error(`MCQ question ${question.id} must have exactly 4 options, got ${question.options?.length || 0}`);
+      }
+      if (typeof question.answer !== "number" || question.answer < 0 || question.answer >= 4) {
+        throw new Error(`MCQ question ${question.id} answer must be a number between 0-3, got ${question.answer}`);
+      }
+      for (let i = 0; i < question.options.length; i++) {
+        if (!question.options[i] || !question.options[i].trim()) {
+          throw new Error(`MCQ question ${question.id} option ${i} is empty`);
+        }
+      }
+    }
+    const nonMcqQuestions = processedQuestions.filter((q) => q.type !== "mcq");
+    for (const question of nonMcqQuestions) {
+      if (!question.options || question.options.length !== 0) {
+        console.warn(`Non-MCQ question ${question.id} has options but should have empty array`);
+        question.options = [];
       }
     }
     const fillQuestions = processedQuestions.filter((q) => q.type === "fill");
@@ -908,6 +944,281 @@ async function registerRoutes(app2) {
       console.error("Get latest quiz attempt error:", error);
       res.status(500).json({
         error: error instanceof Error ? error.message : "Failed to get latest quiz attempt"
+      });
+    }
+  });
+  app2.post("/api/debug/test-update/:quizId", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      console.log("=== TEST UPDATE START ===");
+      const existingQuiz = await storage.getQuiz(quizId);
+      if (!existingQuiz) {
+        return res.status(404).json({ error: "Quiz not found" });
+      }
+      if (existingQuiz.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      console.log("Testing simple update...");
+      const testUpdate = await storage.updateQuiz(quizId, {
+        name: existingQuiz.name + " (test)"
+      });
+      console.log("Simple update successful:", testUpdate.id);
+      await storage.updateQuiz(quizId, {
+        name: existingQuiz.name
+      });
+      console.log("Revert successful");
+      console.log("=== TEST UPDATE END ===");
+      res.json({ success: true, message: "Database update test passed" });
+    } catch (error) {
+      console.error("Test update error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Test failed" });
+    }
+  });
+  app2.post("/api/debug/regenerate/:quizId", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      console.log("=== DEBUG REGENERATE START ===");
+      console.log("Quiz ID:", quizId);
+      console.log("User ID:", userId);
+      const existingQuiz = await storage.getQuiz(quizId);
+      console.log("Existing quiz found:", !!existingQuiz);
+      if (existingQuiz) {
+        console.log("Quiz details:", {
+          id: existingQuiz.id,
+          userId: existingQuiz.userId,
+          uploadId: existingQuiz.uploadId,
+          questionsCount: existingQuiz.questions?.length,
+          meta: existingQuiz.meta
+        });
+      }
+      if (existingQuiz) {
+        const upload2 = await storage.getUpload(existingQuiz.uploadId);
+        console.log("Upload found:", !!upload2);
+        if (upload2) {
+          console.log("Upload details:", {
+            id: upload2.id,
+            textByPageLength: upload2.textByPage?.length,
+            pageCount: upload2.pageCount
+          });
+        }
+      }
+      console.log("=== DEBUG REGENERATE END ===");
+      res.json({ success: true, message: "Debug info logged to console" });
+    } catch (error) {
+      console.error("Debug regenerate error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Debug failed" });
+    }
+  });
+  app2.post("/api/quizzes/:quizId/regenerate", authenticateUser, async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      const userId = req.user.id;
+      console.log("Regenerating quiz:", quizId, "for user:", userId);
+      const existingQuiz = await storage.getQuiz(quizId);
+      if (!existingQuiz) {
+        return res.status(404).json({ error: "Quiz not found" });
+      }
+      if (existingQuiz.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized access to quiz" });
+      }
+      const upload2 = await storage.getUpload(existingQuiz.uploadId);
+      if (!upload2) {
+        return res.status(404).json({ error: "Original upload not found" });
+      }
+      const numQuestions = existingQuiz.questions.length;
+      const questionTypes = existingQuiz.meta.countsByType;
+      const questionTypeSettings = {
+        mcq: questionTypes.mcq > 0,
+        tf: questionTypes.tf > 0,
+        fill: questionTypes.fill > 0
+      };
+      console.log("Regenerating with settings:", { numQuestions, questionTypeSettings });
+      console.log("Upload textByPage length:", upload2.textByPage?.length);
+      console.log("Upload ID:", existingQuiz.uploadId);
+      console.log("Calling generateQuiz...");
+      let quizResult;
+      try {
+        quizResult = await generateQuiz({
+          textByPage: upload2.textByPage,
+          numQuestions,
+          questionTypes: questionTypeSettings
+        }, existingQuiz.uploadId);
+        console.log("generateQuiz completed, questions count:", quizResult.questions.length);
+      } catch (generateError) {
+        console.error("generateQuiz failed:", generateError);
+        const errorMessage = generateError instanceof Error ? generateError.message : "Unknown error";
+        if (errorMessage.includes("quota") || errorMessage.includes("limit")) {
+          throw new Error("API quota exceeded. Please try again tomorrow or upgrade your plan.");
+        }
+        throw new Error(`Quiz generation failed: ${errorMessage}`);
+      }
+      console.log("Quiz result structure:", {
+        hasQuestions: !!quizResult.questions,
+        hasMeta: !!quizResult.meta,
+        questionsType: typeof quizResult.questions,
+        metaType: typeof quizResult.meta
+      });
+      if (!quizResult.questions || !Array.isArray(quizResult.questions)) {
+        throw new Error("Generated quiz has invalid questions array");
+      }
+      if (!quizResult.meta) {
+        throw new Error("Generated quiz has no meta data");
+      }
+      console.log("Updating quiz in database...");
+      console.log("Update data:", {
+        questionsCount: quizResult.questions.length,
+        meta: quizResult.meta
+      });
+      let updatedQuiz;
+      try {
+        const updateData = {
+          questions: quizResult.questions,
+          meta: quizResult.meta
+        };
+        console.log("Update data validation:", {
+          questionsIsArray: Array.isArray(updateData.questions),
+          questionsLength: updateData.questions?.length,
+          metaIsObject: typeof updateData.meta === "object",
+          metaKeys: updateData.meta ? Object.keys(updateData.meta) : []
+        });
+        updatedQuiz = await storage.updateQuiz(quizId, updateData);
+        console.log("Database update completed successfully");
+        console.log("Updated quiz ID:", updatedQuiz.id);
+      } catch (updateError) {
+        console.error("Database update failed:", updateError);
+        console.error("Update error details:", {
+          name: updateError instanceof Error ? updateError.name : "Unknown",
+          message: updateError instanceof Error ? updateError.message : "Unknown error",
+          stack: updateError instanceof Error ? updateError.stack : "No stack trace"
+        });
+        throw updateError;
+      }
+      console.log("Quiz regenerated successfully:", updatedQuiz.id);
+      res.json(updatedQuiz);
+    } catch (error) {
+      console.error("Regenerate quiz error:", error);
+      console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+      console.error("Error details:", {
+        name: error instanceof Error ? error.name : "Unknown",
+        message: error instanceof Error ? error.message : "Unknown error",
+        cause: error instanceof Error ? error.cause : void 0
+      });
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to regenerate quiz",
+        details: error instanceof Error ? error.stack : void 0
+      });
+    }
+  });
+  app2.get("/api/user/statistics", authenticateUser, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      console.log("Getting user statistics for:", userId);
+      const [quizzes2, attempts] = await Promise.all([
+        storage.getUserQuizzes(userId),
+        storage.getUserQuizAttempts(userId)
+      ]);
+      console.log("Statistics debug:", {
+        userId,
+        quizzesCount: quizzes2.length,
+        attemptsCount: attempts.length,
+        quizzes: quizzes2.map((q) => ({ id: q.id, name: q.name, createdAt: q.createdAt })),
+        attempts: attempts.map((a) => ({ id: a.id, quizId: a.quizId, score: a.score, completedAt: a.completedAt }))
+      });
+      const now = /* @__PURE__ */ new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const quizzesCompletedThisMonth = attempts.filter(
+        (attempt) => new Date(attempt.completedAt) >= startOfMonth
+      ).length;
+      const sortedAttempts = attempts.sort(
+        (a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()
+      );
+      let currentStreak = 0;
+      let maxStreak = 0;
+      let tempStreak = 0;
+      let lastDate = null;
+      for (const attempt of sortedAttempts) {
+        const attemptDate = new Date(attempt.completedAt);
+        const attemptDateStr = attemptDate.toDateString();
+        if (lastDate === null) {
+          tempStreak = 1;
+          lastDate = attemptDate;
+        } else {
+          const lastDateStr = lastDate.toDateString();
+          const daysDiff = Math.floor((attemptDate.getTime() - lastDate.getTime()) / (1e3 * 60 * 60 * 24));
+          if (daysDiff === 1) {
+            tempStreak++;
+          } else if (daysDiff === 0) {
+            continue;
+          } else {
+            maxStreak = Math.max(maxStreak, tempStreak);
+            tempStreak = 1;
+          }
+          lastDate = attemptDate;
+        }
+      }
+      maxStreak = Math.max(maxStreak, tempStreak);
+      if (sortedAttempts.length > 0) {
+        const mostRecentAttempt = sortedAttempts[sortedAttempts.length - 1];
+        const mostRecentDate = new Date(mostRecentAttempt.completedAt);
+        const daysSinceLastAttempt = Math.floor((now.getTime() - mostRecentDate.getTime()) / (1e3 * 60 * 60 * 24));
+        if (daysSinceLastAttempt <= 1) {
+          currentStreak = 1;
+          for (let i = sortedAttempts.length - 2; i >= 0; i--) {
+            const currentAttemptDate = new Date(sortedAttempts[i].completedAt);
+            const nextAttemptDate = new Date(sortedAttempts[i + 1].completedAt);
+            const daysDiff = Math.floor((nextAttemptDate.getTime() - currentAttemptDate.getTime()) / (1e3 * 60 * 60 * 24));
+            if (daysDiff === 1) {
+              currentStreak++;
+            } else {
+              break;
+            }
+          }
+        }
+      }
+      const totalAnswers = attempts.reduce((sum, attempt) => sum + attempt.totalQuestions, 0);
+      const correctAnswers = attempts.reduce((sum, attempt) => sum + attempt.score, 0);
+      const accuracyRate = totalAnswers > 0 ? correctAnswers / totalAnswers * 100 : 0;
+      const averageScore = attempts.length > 0 ? attempts.reduce((sum, attempt) => sum + attempt.percentage, 0) / attempts.length : 0;
+      const totalQuizzesTaken = attempts.length;
+      const statistics = {
+        quizzesCompletedThisMonth,
+        currentStreak,
+        maxStreak,
+        accuracyRate: Math.round(accuracyRate * 100) / 100,
+        averageScore: Math.round(averageScore * 100) / 100,
+        totalQuizzesTaken,
+        totalQuizzesGenerated: quizzes2.length
+      };
+      console.log("Calculated statistics:", statistics);
+      res.json(statistics);
+    } catch (error) {
+      console.error("Get user statistics error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to get user statistics"
+      });
+    }
+  });
+  app2.get("/api/debug/user-data", authenticateUser, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      console.log("Debug: Getting user data for:", userId);
+      const [quizzes2, attempts] = await Promise.all([
+        storage.getUserQuizzes(userId),
+        storage.getUserQuizAttempts(userId)
+      ]);
+      res.json({
+        userId,
+        quizzesCount: quizzes2.length,
+        attemptsCount: attempts.length,
+        quizzes: quizzes2.map((q) => ({ id: q.id, name: q.name, createdAt: q.createdAt })),
+        attempts: attempts.map((a) => ({ id: a.id, quizId: a.quizId, score: a.score, completedAt: a.completedAt }))
+      });
+    } catch (error) {
+      console.error("Debug user data error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Failed to get user data"
       });
     }
   });
