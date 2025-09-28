@@ -9,26 +9,24 @@ export default function HomePage() {
     window.location.href = "/login";
   };
 
-  const features = [
+  const timelineSteps = [
     {
+      step: "1",
       icon: FileText,
-      title: "Upload PDFs",
+      title: "Upload Your PDF",
       description: "Simply drag and drop your lecture slides! We support PDF files up to 20MB with intelligent content extraction. It's super easy!"
     },
     {
+      step: "2", 
       icon: Zap,
-      title: "AI-Powered Generation",
+      title: "AI Creates Questions",
       description: "Our super smart AI analyzes your content and creates amazing quizzes with multiple choice, true/false, and short answer questions!"
     },
     {
+      step: "3",
       icon: Brain,
-      title: "Smart Learning",
+      title: "Take & Learn",
       description: "Get personalized feedback and explanations for each answer to boost your understanding and memory! You'll learn faster!"
-    },
-    {
-      icon: Users,
-      title: "Track & Share",
-      description: "Keep track of your quiz history, monitor your awesome progress, and share quizzes with friends or classmates!"
     }
   ];
 
@@ -139,28 +137,40 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4" style={{ color: '#6b2d16' }}>
-              How ClariTA Helps You Learn
+              How It Works
             </h2>
             <p className="text-xl max-w-2xl mx-auto" style={{ color: '#6b2d16' }}>
-              Our AI-powered platform makes studying more effective and engaging than ever before!
+              Follow these simple steps to turn your lecture slides into practice quizzes!
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-105">
-                <CardHeader>
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: index % 3 === 0 ? '#de8318' : index % 3 === 1 ? '#dc5817' : '#6b2d16' }}>
-                    <feature.icon className="h-8 w-8 text-white" />
-                  </div>
-                  <CardTitle className="text-xl" style={{ color: '#6b2d16' }}>{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription style={{ color: '#6b2d16' }}>
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {timelineSteps.map((step, index) => (
+              <div key={index} className="relative">
+                {/* Timeline connector line */}
+                {index < timelineSteps.length - 1 && (
+                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 z-0" style={{ backgroundColor: '#dc5817' }}></div>
+                )}
+                
+                <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-105 relative z-10">
+                  <CardHeader>
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: index % 3 === 0 ? '#de8318' : index % 3 === 1 ? '#dc5817' : '#6b2d16' }}>
+                        <step.icon className="h-8 w-8 text-white" />
+                      </div>
+                      <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: '#dc5817' }}>
+                        {step.step}
+                      </div>
+                    </div>
+                    <CardTitle className="text-xl" style={{ color: '#6b2d16' }}>{step.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription style={{ color: '#6b2d16' }}>
+                      {step.description}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </div>
             ))}
           </div>
         </div>
@@ -171,9 +181,6 @@ export default function HomePage() {
         className="py-20 relative"
         style={{ backgroundColor: '#fef7e0' }}
       >
-        {/* Subtle blob shapes */}
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full opacity-20" style={{ backgroundColor: '#f5e2aa' }}></div>
-        <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full opacity-20" style={{ backgroundColor: '#f5e2aa' }}></div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
@@ -213,7 +220,7 @@ export default function HomePage() {
       <section 
         className="py-20 relative overflow-hidden"
         style={{ 
-          background: 'linear-gradient(135deg, #fef7e0 0%, #f5e2aa 50%, #fef7e0 100%)'
+          background: 'linear-gradient(135deg, #fef7e0 0%, #f0d4a0 50%, #fef7e0 100%)'
         }}
       >
         {/* Subtle pattern overlay */}
