@@ -8,6 +8,7 @@ import { QuizCard } from "@/components/QuizCard";
 import { Toolbar } from "@/components/Toolbar";
 import { GraduationCap, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { authenticatedFetch } from "@/lib/api";
+import Logo from "@/components/Logo";
 import type { Quiz, Question } from "@/types/quiz";
 
 interface QuizAnswer {
@@ -243,37 +244,50 @@ export default function QuizPage() {
   // Results View
   if (isSubmitted && quizResult) {
     return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b border-border bg-card">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => window.location.href = "/dashboard"}
-                  data-testid="button-back"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <GraduationCap className="text-primary-foreground text-sm" />
+      <div 
+        className="min-h-screen relative overflow-hidden" 
+        style={{ 
+          background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
+        }}
+      >
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+          <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
+          <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
+          <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+        </div>
+
+        <div className="relative z-10">
+          {/* Header */}
+          <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => window.location.href = "/dashboard"}
+                    data-testid="button-back"
+                    className="text-white hover:bg-white/20"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <Logo size="md" />
+                  <h1 className="text-xl font-semibold text-white">ClariTA</h1>
+                  <span className="text-sm text-white/90 bg-white/20 px-2 py-1 rounded-full">
+                    Quiz Results
+                  </span>
                 </div>
-                <h1 className="text-xl font-semibold text-foreground">ClariTA</h1>
-                <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                  Quiz Results
-                </span>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-          {/* Results Header */}
-          <Card className="p-6 mb-6">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold text-foreground mb-2">Quiz Complete!</h2>
+          <div className="container mx-auto px-4 py-8 max-w-4xl">
+            {/* Results Header */}
+            <Card className="p-6 mb-6 border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+              <div className="text-center">
+                <h2 className="text-3xl font-bold mb-2" style={{ color: '#6b2d16' }}>Quiz Complete!</h2>
               <div className="flex items-center justify-center space-x-4 mb-4">
                 <div className="text-center">
                   <p className="text-4xl font-bold text-primary">{quizResult.percentage}%</p>
@@ -346,6 +360,7 @@ export default function QuizPage() {
               })}
             </div>
           </Card>
+          </div>
         </div>
       </div>
     );
@@ -353,25 +368,38 @@ export default function QuizPage() {
 
   // Quiz Taking View
   return (
-    <div className="min-h-screen bg-background">
+    <div 
+      className="min-h-screen relative overflow-hidden" 
+      style={{ 
+        background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
+      }}
+    >
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+        <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
+        <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
+        <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+      </div>
+
+      <div className="relative z-10">
       {/* Header */}
-      <header className="border-b border-border bg-card">
+        <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => window.location.href = "/dashboard"}
-                data-testid="button-back"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <GraduationCap className="text-primary-foreground text-sm" />
-              </div>
-              <h1 className="text-xl font-semibold text-foreground">ClariTA</h1>
-              <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => window.location.href = "/dashboard"}
+                  data-testid="button-back"
+                  className="text-white hover:bg-white/20"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+              <Logo size="md" />
+              <h1 className="text-xl font-semibold text-white">ClariTA</h1>
+              <span className="text-sm text-white/90 bg-white/20 px-2 py-1 rounded-full">
                 Quiz
               </span>
             </div>
@@ -424,6 +452,7 @@ export default function QuizPage() {
           >
             Submit Quiz ({answeredCount}/{quiz.questions.length})
           </Button>
+        </div>
         </div>
       </div>
     </div>

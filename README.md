@@ -1,172 +1,325 @@
-# ClariTA-Teaching-Assistant
+# 🦊 ClariTA - AI-Powered Teaching Assistant
 
-AI TA — Technical Specification
-1) Problem & Goal
-Students spend hours rereading slides with low retention. AI TA converts lecture slides into active-recall study packs: auto-generated quizzes, short explanations, and quick reviews—fast, accurate, and personalized.
-Primary Challenge Fit
-Microsoft – AI 4 Good: education, wellness, accessibility.
-Google ADK (optional upgrade): multi-agent pipeline (extract → organize → generate → verify → adapt).
-Base44 – Students Track: practical impact, usability, and scalability.
+> Transform your learning experience with AI-generated quizzes from PDF lecture slides
 
-2) Core User Stories (MVP)
-Upload slides (PDF/PPTX) → see parsed outline (sections, key terms).
-Generate quiz → “10 questions” (MCQ, T/F, short answer) + answer key with 1–2 line explanations.
-Difficulty control → Easy / Medium / Hard modes.
-Topic targeting → select slides or keywords to focus the quiz.
-Export → Save quiz as interactive web test (in-app) and PDF.
-Integrity guardrails → sources/slide refs listed for each question; “study aid, not cheating” reminder.
-Session history → view downloads and last 5 generated packs.
-Stretch (Nice-to-Have)
-Flashcards (spaced repetition seed).
-Cloze deletions (fill-in-the-blank).
-Image-aware questions (diagrams → labels).
-“Confidence slider” per question to personalize next quiz.
-LMS import (Canvas/Blackboard via QTI export).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?logo=node.js&logoColor=white)](https://nodejs.org/)
 
-3) System Architecture
-High-Level Flow
-Client (React) → API (FastAPI/Express) → Pipeline Services → LLM/RAG → Storage
-Components
-Web App (React + Vite)
-Upload viewer (PDF.js), quiz runner, results page.
-A11y: large fonts, high contrast, keyboard-only flow, screen-reader labels.
-API Gateway (Python FastAPI or Node Express)
-Auth (session or magic link for demo).
-Endpoints to parse, generate, verify, export.
-Parsing Service
-PDF/PPTX → text, headings, lists, tables, images (OCR fallback for images).
-Chunk & structure by slide; produce a content graph (sections→subsections→bullets).
-RAG Index
-Embeddings store (FAISS / Qdrant in-container) keyed by slide index; metadata includes slide#, heading, text span.
-Generation Service (LLM)
-Deterministic prompts for MCQ/T/F/Short Answer.
-Returns JSON schema (see §6) with distractor quality rules.
-Verification Service
-Cross-checks each answer against top-K slide chunks; flags low-confidence items for regeneration.
-Export Service
-PDF quiz pack, plus sharable web link.
-Storage
-Postgres (users, uploads, jobs, quizzes).
-S3-compatible bucket (MinIO) for slide files & exports.
-Observability
-Structured logs (JSON), prompt/latency metrics, verification confidence scores.
+## 📖 Overview
 
-4) Multi-Agent (Google ADK) Option
-Agent A – Extractor: parse slides → structured outline + embeddings.
-Agent B – Curator: select key concepts by difficulty/topic.
-Agent C – Generator: produce questions + distractors + explanations.
-Agent D – Verifier: cite slide spans; re-generate low-confidence items.
-Agent E – Personalizer (optional): adapts difficulty from prior attempts.
-Parallelization: B & C per topic; D runs concurrently on generated items.
-Loop: Keep regenerating until avg confidence ≥ threshold or timeout.
+ClariTA is an innovative AI-powered teaching assistant that automatically generates interactive quizzes from PDF lecture slides. Built with modern web technologies, it provides educators and students with a seamless way to create, take, and review assessments.
 
-5) MVP Feature Details
-Question Types
-Multiple Choice (MCQ): 1 correct + 3 plausible distractors; rationale ≤ 2 lines.
-True/False: explanation required; if false, state the correction.
-Short Answer: expected keywords list; concise model answer (≤ 40 words).
-Difficulty Modes
-Easy: definitions, recall.
-Medium: compare/contrast, “why” prompts.
-Hard: application & scenario-based, multi-concept.
-Personalization Knobs
-Topic picker (by slide range/keywords).
-of questions (5–25).
-Time limit toggle (practice exam).
-Integrity & Safety
-Slide citations per question (slide# or heading).
-Hallucination guard: verification service with confidence score (0–1).
-Ethics banner: “Study aid, not for graded exams.”
+### ✨ Key Features
 
-6) Data & API Contracts
-Core Tables (Postgres)
-users(id, email, created_at)
-uploads(id, user_id, filename, storage_url, pages, created_at)
-indexes(id, upload_id, vector_store_ref, created_at)
-jobs(id, user_id, upload_id, params_json, status, created_at, finished_at)
-quizzes(id, job_id, meta_json, confidence_mean, created_at)
-questions(id, quiz_id, type, prompt, options_json, answer_key_json, explanation, citations_json, confidence)
-Generation Request (JSON)
-{
-  "upload_id": "uuid",
-  "num_questions": 10,
-  "question_types": ["mcq","tf","short"],
-  "difficulty": "medium",
-  "topic_filter": {"slides":[5,6,7], "keywords":["ACID","indexing"]},
-  "max_tokens": 1200
-}
+- **📄 PDF Upload & Processing**: Upload lecture slides and extract content automatically
+- **🤖 AI Quiz Generation**: Generate multiple question types (MCQ, True/False, Fill-in-the-blank)
+- **📊 Interactive Dashboard**: Track progress, view statistics, and manage quizzes
+- **🎯 Customizable Quizzes**: Configure question count and types
+- **📈 Performance Analytics**: Detailed results and explanations
+- **🔐 Secure Authentication**: User accounts with Supabase integration
+- **📱 Responsive Design**: Works seamlessly on desktop and mobile
 
-Generation Response (JSON)
-{
-  "quiz_id": "uuid",
-  "questions": [
-    {
-      "type": "mcq",
-      "prompt": "Which statement best describes ACID 'Isolation'?",
-      "options": ["...", "...", "...", "..."],
-      "answer": 2,
-      "explanation": "Isolation ensures ...",
-      "citations": [{"slide": 12, "span":"Isolation definition"}],
-      "confidence": 0.86
-    }
-  ],
-  "confidence_mean": 0.83
-}
+## 🚀 Quick Start
 
-Export
-GET /quizzes/{id}/export/pdf
-GET /quizzes/{id} returns quiz JSON for the React runner.
+### Prerequisites
 
-7) Model & Prompting Strategy
-LLM: GPT-class or open-weights (Llama-3.x) via vLLM on GPU (if available).
-RAG: Top-K = 6; max 2 chunks per question; include citations in prompt.
-Prompts: system prompt with rubric (difficulty rules, distractor quality, length caps); explicit JSON schema; ask model to refuse when not enough context (fallback to “need more slides”).
-Verification: second pass that re-queries RAG to score correctness (semantic entailment) and highlight conflicts.
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
+- Google Gemini API key
 
-8) Frontend UX (React)
-Upload Page: drag-and-drop, file size indicator, quick parse preview.
-Generate Panel: selectors (difficulty, num questions, topic filter).
-Quiz Runner: one Q per screen, timer option, flag for review, submit → results (score, explanations, sources).
-Review & Export: download PDF, copy share link, “Regenerate low-confidence only.”
-Accessibility: semantic HTML, ARIA labels, skip-links, high contrast mode.
+### Installation
 
-9) Security & Privacy
-Files scoped to user; signed URLs for downloads.
-PII-free by design (slides rarely contain PII; still warn users).
-Data retention: auto-purge uploads after 7 days (configurable).
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/ClariTA-Teaching-Assistant.git
+   cd ClariTA-Teaching-Assistant
+   ```
 
-10) Evaluation Metrics
-Latency: time to first quiz (< 45s for 20 slides, 10 questions).
-Quality: avg confidence ≥ 0.75; judge acceptance (live spot-check).
-Engagement: % completed quizzes; # regenerations; export rate.
-Accessibility: keyboard-only completion success.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-11) Demo Script (5 minutes)
-Problem (30s): passive rereading vs active recall.
-Live Upload (45s): parse preview, choose “Medium”, “10 Q”.
-Quiz Gen (30–60s): show progress + confidence meter.
-Take 2–3 Qs (60s): show explanations + citations.
-Regenerate Low-Confidence (30s): verifier loop in action.
-Export PDF (15s): print-ready pack.
-Sponsor Tie-In (30s): AI 4 Good + (optionally) ADK multi-agent diagram.
+3. **Environment Setup**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Configure your environment variables:
+   ```env
+   # Supabase Configuration
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   
+   # Google Gemini API
+   GEMINI_API_KEY=your_gemini_api_key
+   
+   # Server Configuration
+   PORT=3000
+   NODE_ENV=development
+   ```
 
-12) Build Plan (Hackathon Timeline)
-T0–4h: Repo scaffolds, DB schema, file upload & parse, minimal UI.
-T4–10h: Embeddings + RAG; basic quiz generation (MCQ only).
-T10–16h: Add T/F + Short Answer; results screen; PDF export.
-T16–22h: Verifier pass + confidence; topic filter; difficulty tuning.
-T22–30h: A11y polish; error states; seed demo slides.
-T30–36h: (Optional) Multi-agent orchestration for ADK; demo script; pitch deck.
+4. **Database Setup**
+   ```bash
+   npm run db:migrate
+   ```
 
-13) Risks & Mitigations
-Hallucinations: verifier with RAG, confidence threshold, regen flow.
-OCR misses text in images: easy fallback: “image-based content not parsed; upload text-heavy slides or add alt text.”
-Time overrun: lock scope at 10-question quiz; postpone flashcards.
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-14) What Makes This Win
-Clear pain point + immediate value.
-Tight, fast demo with visible verification (trust).
-Accessibility & ethics baked in.
-Optional multi-agent architecture to hit Google ADK judging criteria.
-Want a one-page pitch deck outline and a ready-to-paste prompt template for the generator/verifier next?
+6. **Open your browser**
+   Navigate to `http://localhost:3000`
 
+## 🏗️ Architecture
+
+### Frontend (React + TypeScript)
+- **Framework**: React 18 with TypeScript
+- **Routing**: Wouter for lightweight routing
+- **Styling**: Tailwind CSS with custom design system
+- **State Management**: TanStack Query for server state
+- **UI Components**: Custom component library with shadcn/ui
+- **Authentication**: Supabase Auth integration
+
+### Backend (Node.js + TypeScript)
+- **Runtime**: Node.js with Express
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: Supabase Auth middleware
+- **File Processing**: PDF parsing and text extraction
+- **AI Integration**: Google Gemini API for quiz generation
+- **Storage**: Supabase Storage for file management
+
+### Database Schema
+```sql
+-- Users (managed by Supabase Auth)
+-- Uploads table
+CREATE TABLE uploads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  file_name TEXT NOT NULL,
+  file_size INTEGER NOT NULL,
+  page_count INTEGER NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Quizzes table
+CREATE TABLE quizzes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  upload_id UUID REFERENCES uploads(id),
+  name TEXT,
+  folder TEXT,
+  tags TEXT[],
+  meta JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Quiz attempts table
+CREATE TABLE quiz_attempts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  quiz_id UUID REFERENCES quizzes(id),
+  score INTEGER NOT NULL,
+  total_questions INTEGER NOT NULL,
+  percentage DECIMAL(5,2) NOT NULL,
+  answers JSONB NOT NULL,
+  completed_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary Orange**: `#de8318` - Main brand color
+- **Secondary Orange**: `#dc5817` - Accent color  
+- **Dark Brown**: `#6b2d16` - Text and contrast
+- **Cream**: `#f5e2aa` - Background gradient
+- **Light Cream**: `#fef7e0` - Background gradient
+
+### Typography
+- **Headings**: Bold, large sizes with orange accents
+- **Body Text**: Clean, readable fonts with proper contrast
+- **Interactive Elements**: Clear call-to-action styling
+
+### Components
+- **Glassmorphism Cards**: Semi-transparent with backdrop blur
+- **Hover Effects**: Smooth transitions and elevation changes
+- **Responsive Grid**: Adaptive layouts for all screen sizes
+
+## 📁 Project Structure
+
+```
+ClariTA-Teaching-Assistant/
+├── client/                 # Frontend React application
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   │   ├── ui/        # Base UI components (shadcn/ui)
+│   │   │   ├── AuthForm.tsx
+│   │   │   ├── Header.tsx
+│   │   │   ├── Logo.tsx
+│   │   │   └── ...
+│   │   ├── pages/         # Page components
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── UploadPage.tsx
+│   │   │   ├── QuizPage.tsx
+│   │   │   └── ...
+│   │   ├── contexts/      # React contexts
+│   │   ├── hooks/         # Custom hooks
+│   │   ├── lib/          # Utility libraries
+│   │   └── types/        # TypeScript type definitions
+├── server/                # Backend Node.js application
+│   ├── routes/           # API route handlers
+│   ├── services/         # Business logic services
+│   ├── middleware/       # Express middleware
+│   └── index.ts         # Server entry point
+├── shared/               # Shared code between client/server
+│   └── schema.ts        # Database schema definitions
+├── migrations/           # Database migration files
+└── public/              # Static assets
+    └── assets/
+        └── images/
+            └── fox-logo.png
+```
+
+## 🔧 API Endpoints
+
+### Authentication
+- `POST /api/auth/signup` - User registration
+- `POST /api/auth/signin` - User login
+- `POST /api/auth/signout` - User logout
+
+### File Management
+- `POST /api/upload` - Upload PDF file
+- `GET /api/user/uploads` - Get user's uploads
+- `DELETE /api/uploads/:id` - Delete upload
+
+### Quiz Management
+- `POST /api/quizzes` - Generate new quiz
+- `GET /api/user/quizzes` - Get user's quizzes
+- `GET /api/quizzes/:id` - Get specific quiz
+- `PATCH /api/quizzes/:id` - Update quiz metadata
+- `DELETE /api/quizzes/:id` - Delete quiz
+
+### Quiz Attempts
+- `POST /api/quiz-attempts` - Submit quiz attempt
+- `GET /api/quiz-attempts/:id` - Get attempt results
+- `GET /api/quizzes/:id/latest-attempt` - Get latest attempt
+
+### Statistics
+- `GET /api/user/statistics` - Get user performance stats
+
+## 🧪 Testing
+
+### Running Tests
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Test Structure
+- **Unit Tests**: Component and utility function testing
+- **Integration Tests**: API endpoint testing
+- **E2E Tests**: Full user workflow testing
+
+## 🚀 Deployment
+
+### Production Build
+```bash
+npm run build
+```
+
+### Environment Variables (Production)
+```env
+NODE_ENV=production
+SUPABASE_URL=your_production_supabase_url
+SUPABASE_ANON_KEY=your_production_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_production_supabase_service_role_key
+GEMINI_API_KEY=your_production_gemini_api_key
+```
+
+### Deployment Options
+- **Vercel**: Recommended for full-stack deployment
+- **Netlify**: Frontend deployment with serverless functions
+- **Railway**: Full-stack deployment with database
+- **Docker**: Containerized deployment
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m 'Add some amazing feature'
+   ```
+4. **Push to the branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. **Open a Pull Request**
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Write comprehensive tests
+- Update documentation
+- Follow the existing code style
+- Ensure responsive design
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Team
+
+**ClariTA Development Team**
+- **Enzo** - BS Information Technology | FIU | First Time Hacker
+- **Angelica** - [Role and background]
+- **Fabianne** - [Role and background]  
+- **Veronica** - [Role and background]
+
+## 🙏 Acknowledgments
+
+- **Supabase** for authentication and database services
+- **Google Gemini** for AI-powered quiz generation
+- **shadcn/ui** for beautiful UI components
+- **Tailwind CSS** for utility-first styling
+- **React** and **TypeScript** communities for excellent tooling
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/your-username/ClariTA-Teaching-Assistant/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-username/ClariTA-Teaching-Assistant/discussions)
+- **Email**: support@clarita.app
+
+## 🔮 Roadmap
+
+### Upcoming Features
+- [ ] **Multi-language Support** - Support for multiple languages
+- [ ] **Advanced Analytics** - Detailed performance insights
+- [ ] **Quiz Sharing** - Share quizzes with other users
+- [ ] **Mobile App** - Native mobile application
+- [ ] **Integration APIs** - LMS and educational platform integrations
+- [ ] **Advanced Question Types** - Drag-and-drop, matching, etc.
+- [ ] **Collaborative Features** - Team workspaces and collaboration
+- [ ] **AI Tutoring** - Personalized learning recommendations
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by the ClariTA Team</p>
+  <p>Transforming education with AI! 🦊</p>
+</div>

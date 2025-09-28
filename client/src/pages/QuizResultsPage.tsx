@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, CheckCircle, XCircle, Brain, Trophy, Calendar } from "lucide-react";
 import { authenticatedFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import Logo from "@/components/Logo";
 import type { Quiz, Question } from "@/types/quiz";
 
 interface QuizAttemptAnswer {
@@ -144,35 +145,48 @@ export default function QuizResultsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => window.location.href = "/dashboard"}
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Brain className="text-primary-foreground text-sm" />
+    <div 
+      className="min-h-screen relative overflow-hidden" 
+      style={{ 
+        background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
+      }}
+    >
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+        <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
+        <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
+        <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+      </div>
+
+      <div className="relative z-10">
+        {/* Header */}
+        <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => window.location.href = "/dashboard"}
+                  className="text-white hover:bg-white/20"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <Logo size="md" />
+                <h1 className="text-xl font-semibold text-white">ClariTA</h1>
+                <span className="text-sm text-white/90 bg-white/20 px-2 py-1 rounded-full">
+                  Quiz Results
+                </span>
               </div>
-              <h1 className="text-xl font-semibold text-foreground">ClariTA</h1>
-              <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                Quiz Results
-              </span>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Quiz Info */}
-          <Card>
+        <main className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Quiz Info */}
+            <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Trophy className="h-5 w-5" />
@@ -184,8 +198,8 @@ export default function QuizResultsPage() {
             </CardHeader>
           </Card>
 
-          {/* Score Summary */}
-          <Card>
+            {/* Score Summary */}
+            <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Quiz Complete!</CardTitle>
             </CardHeader>
@@ -215,8 +229,8 @@ export default function QuizResultsPage() {
             </CardContent>
           </Card>
 
-          {/* Answer Key */}
-          <Card>
+            {/* Answer Key */}
+            <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Answer Key</CardTitle>
               <CardDescription>
@@ -351,8 +365,9 @@ export default function QuizResultsPage() {
               Back to Dashboard
             </Button>
           </div>
-        </div>
-      </main>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
