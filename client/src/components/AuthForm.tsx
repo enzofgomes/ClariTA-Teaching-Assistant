@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Alert, AlertDescription } from './ui/alert';
-import { Brain, GraduationCap, Sparkles } from 'lucide-react';
+import { Brain, Sparkles, ArrowRight } from 'lucide-react';
 
 interface AuthFormProps {
   onSuccess?: () => void;
@@ -80,9 +80,9 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Simple background styling
+  // Background styling to match LandingPage
   useEffect(() => {
-    document.body.style.background = 'linear-gradient(to bottom right, rgb(239 246 255), rgb(238 242 255), rgb(221 214 254))';
+    document.body.style.background = 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)';
     document.body.style.backgroundAttachment = 'fixed';
     
     return () => {
@@ -92,31 +92,39 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)' }}>
+      {/* Subtle wave pattern overlay */}
+      <div className="absolute inset-0 opacity-10">
+        <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="white"/>
+          <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" fill="white"/>
+        </svg>
+      </div>
+
       <div className="relative z-10">
         {/* Header */}
-        <header className="w-full py-8">
+        <header className="w-full py-12">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-center space-x-3 mb-4">
+            <div className="flex items-center justify-center space-x-4 mb-6">
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg">
-                  <Brain className="h-7 w-7 text-white" />
+                <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-xl" style={{ backgroundColor: '#de8318' }}>
+                  <Brain className="h-9 w-9 text-white" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-                  <Sparkles className="h-2.5 w-2.5 text-white" />
+                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#dc5817' }}>
+                  <Sparkles className="h-3 w-3 text-white" />
                 </div>
               </div>
               <div className="text-center">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold" style={{ color: '#6b2d16' }}>
                   ClariTA
                 </h1>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-lg font-medium" style={{ color: '#6b2d16' }}>
                   Teaching Assistant
                 </p>
               </div>
             </div>
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto">
+              <p className="max-w-2xl mx-auto text-lg leading-relaxed" style={{ color: '#6b2d16' }}>
                 Transform your lecture slides into interactive quizzes with AI-powered intelligence
               </p>
             </div>
@@ -124,31 +132,39 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
         </header>
 
         {/* Auth Form */}
-        <div className="flex items-center justify-center px-4 pb-8">
-          <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-center px-4 pb-12">
+          <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:scale-105">
+            <CardHeader className="text-center pb-8 pt-8">
+              <CardTitle className="text-3xl font-bold" style={{ color: '#6b2d16' }}>
                 Welcome Back
               </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
+              <CardDescription className="text-lg" style={{ color: '#6b2d16' }}>
                 Sign in to your account or create a new one to get started
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-8 pb-8">
               <Tabs value={isSignUp ? 'signup' : 'signin'} onValueChange={(value) => setIsSignUp(value === 'signup')}>
-                <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-700">
-                  <TabsTrigger value="signin" className="data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-600">
+                <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-lg p-1">
+                  <TabsTrigger 
+                    value="signin" 
+                    className="data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                    style={{ color: '#6b2d16' }}
+                  >
                     Sign In
                   </TabsTrigger>
-                  <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-600">
+                  <TabsTrigger 
+                    value="signup" 
+                    className="data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                    style={{ color: '#6b2d16' }}
+                  >
                     Sign Up
                   </TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="signin" className="mt-6">
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <TabsContent value="signin" className="mt-8">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="email" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
                         Email Address
                       </Label>
                       <Input
@@ -157,12 +173,12 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
-                        className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
                         placeholder="Enter your email"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <div className="space-y-3">
+                      <Label htmlFor="password" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
                         Password
                       </Label>
                       <Input
@@ -171,38 +187,42 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         required
-                        className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
                         placeholder="Enter your password"
                       />
                     </div>
                     {error && (
-                      <Alert variant="destructive" className="border-red-200 bg-red-50 dark:bg-red-900/20">
-                        <AlertDescription className="text-red-800 dark:text-red-200">
+                      <Alert variant="destructive" className="border-red-200 bg-red-50 rounded-lg">
+                        <AlertDescription className="text-red-800">
                           {error}
                         </AlertDescription>
                       </Alert>
                     )}
                     <Button 
                       type="submit" 
-                      className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                      className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
+                      style={{ backgroundColor: '#de8318' }}
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <div className="flex items-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           <span>Signing In...</span>
                         </div>
                       ) : (
-                        'Sign In'
+                        <>
+                          Sign In
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
                       )}
                     </Button>
                   </form>
                 </TabsContent>
                 
-                <TabsContent value="signup" className="mt-6">
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <TabsContent value="signup" className="mt-8">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="signup-email" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
                         Email Address
                       </Label>
                       <Input
@@ -211,24 +231,24 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
-                        className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
                         placeholder="Enter your email"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="fullName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <div className="space-y-3">
+                      <Label htmlFor="fullName" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
                         Full Name
                       </Label>
                       <Input
                         id="fullName"
                         value={formData.fullName}
                         onChange={(e) => handleInputChange('fullName', e.target.value)}
-                        className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
                         placeholder="Full name"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <div className="space-y-3">
+                      <Label htmlFor="signup-password" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
                         Password
                       </Label>
                       <Input
@@ -237,29 +257,33 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         required
-                        className="h-11 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
                         placeholder="Create a password"
                       />
                     </div>
                     {error && (
-                      <Alert variant="destructive" className="border-red-200 bg-red-50 dark:bg-red-900/20">
-                        <AlertDescription className="text-red-800 dark:text-red-200">
+                      <Alert variant="destructive" className="border-red-200 bg-red-50 rounded-lg">
+                        <AlertDescription className="text-red-800">
                           {error}
                         </AlertDescription>
                       </Alert>
                     )}
                     <Button 
                       type="submit" 
-                      className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                      className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
+                      style={{ backgroundColor: '#de8318' }}
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <div className="flex items-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           <span>Creating Account...</span>
                         </div>
                       ) : (
-                        'Create Account'
+                        <>
+                          Create Account
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
                       )}
                     </Button>
                   </form>
