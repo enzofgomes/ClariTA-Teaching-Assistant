@@ -26,6 +26,7 @@ const teamMembers = [
     description: "AA Computer Science | MDC | First Time Hacker",
     initial: "V"
   }
+
 ];
 
 export default function Header() {
@@ -36,7 +37,7 @@ export default function Header() {
   };
 
   return (
-    <header className="shadow-sm border-b" style={{ backgroundColor: '#1A8FE3' }}>
+    <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -124,9 +125,6 @@ export default function Header() {
               </DialogContent>
             </Dialog>
 
-            <Button onClick={handleLogin} style={{ backgroundColor: '#F17105' }} className="hover:opacity-90 text-white">
-              Try It Now
-            </Button>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -221,9 +219,6 @@ export default function Header() {
                 </DialogContent>
               </Dialog>
 
-              <Button onClick={handleLogin} style={{ backgroundColor: '#F17105' }} className="hover:opacity-90 text-white w-full">
-                Try It Now
-              </Button>
             </div>
           </nav>
         )}
