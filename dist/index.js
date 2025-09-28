@@ -83,7 +83,6 @@ var insertQuizAttemptSchema = createInsertSchema(quizAttempts).omit({
 var client = postgres(process.env.DATABASE_URL);
 var db = drizzle(client);
 var DatabaseStorage = class {
-  // User operations (required for Replit Auth)
   async getUser(id) {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
