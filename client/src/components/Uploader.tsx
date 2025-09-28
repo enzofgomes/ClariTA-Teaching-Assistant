@@ -69,7 +69,7 @@ export function Uploader({ onUploadSuccess }: UploaderProps) {
   return (
     <div
       {...getRootProps()}
-      className={`drag-zone border-2 border-dashed rounded-lg p-8 text-center transition-all hover:border-primary/50 ${
+      className={`drag-zone border-2 bg-white/95 border-dashed rounded-lg p-8 text-center transition-all hover:border-primary/50 ${
         isDragOver ? 'border-primary bg-primary/5' : 'border-border'
       } ${uploadMutation.isPending ? 'opacity-50 pointer-events-none' : ''}`}
       data-testid="upload-zone"

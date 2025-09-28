@@ -133,7 +133,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
 
         {/* Auth Form */}
         <div className="flex items-center justify-center px-4 pb-12">
-          <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:scale-105">
+          <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm :shadhoverow-3xl transition-all duration-300 hover:scale-105">
             <CardHeader className="text-center pb-8 pt-8">
               <CardTitle className="text-3xl font-bold" style={{ color: '#6b2d16' }}>
                 Welcome Back

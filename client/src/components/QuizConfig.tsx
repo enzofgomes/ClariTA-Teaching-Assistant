@@ -57,7 +57,7 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
   const selectedTypesCount = Object.values(questionTypes).filter(Boolean).length;
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto">
+    <Card className="p-6 max-w-2xl mx-auto shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
           <Settings className="h-5 w-5 text-primary" />
