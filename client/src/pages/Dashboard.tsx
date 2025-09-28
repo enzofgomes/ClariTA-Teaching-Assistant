@@ -173,6 +173,8 @@ export default function Dashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user/quizzes"] });
       queryClient.invalidateQueries({ queryKey: ["/api/user/quiz-folders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/statistics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/uploads"] });
       toast({ title: "Quiz deleted successfully" });
     },
     onError: (error) => {
@@ -339,13 +341,15 @@ export default function Dashboard() {
               </Card>
 
             {/* Learning Statistics */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
+            <Card className="mt-8 border-0 shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
+              <CardHeader className="pb-6">
+                <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#dc5817' }}>
+                    <BarChart3 className="h-5 w-5 text-white" />
+                  </div>
                   Learning Statistics
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-lg" style={{ color: '#1F2937' }}>
                   Your quiz performance and progress metrics
                 </CardDescription>
               </CardHeader>
