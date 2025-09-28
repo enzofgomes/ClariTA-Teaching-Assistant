@@ -10,6 +10,7 @@ import { QuizConfig, type QuizConfig as QuizConfigType } from "@/components/Quiz
 import { GraduationCap, Brain, FileText, Scale, FileCheck, ArrowLeft, Home } from "lucide-react";
 import Logo from "@/components/Logo";
 import type { Upload } from "@/types/quiz";
+import Header from "@/components/Header";
 
 export default function UploadPage() {
   const [, setLocation] = useLocation();
