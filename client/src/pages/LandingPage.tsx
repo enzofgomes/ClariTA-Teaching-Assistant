@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Zap, Brain, Users, ArrowRight, CheckCircle, Star, Target, BookOpen, Lightbulb, BarChart3 } from "lucide-react";
 import Header from "@/components/Header";
+import Logo from "@/components/Logo";
 
 export default function HomePage() {
   const handleGetStarted = () => {
@@ -251,7 +252,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-8 relative z-10">
           <div className="text-center text-white">
             <div className="flex items-center justify-center space-x-2 mb-4">
-              <Brain className="h-6 w-6 text-white" />
+              <Logo size="sm" />
               <span className="text-lg font-semibold">ClariTA</span>
             </div>
             <p>&copy; 2025 ClariTA. Transforming education with AI!</p>

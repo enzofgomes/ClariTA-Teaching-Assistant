@@ -8,6 +8,7 @@ import { authenticatedFetch } from "@/lib/api";
 import { Uploader } from "@/components/Uploader";
 import { QuizConfig, type QuizConfig as QuizConfigType } from "@/components/QuizConfig";
 import { GraduationCap, Brain, FileText, Scale, FileCheck, ArrowLeft, Home } from "lucide-react";
+import Logo from "@/components/Logo";
 import type { Upload } from "@/types/quiz";
 
 export default function UploadPage() {
@@ -112,9 +113,7 @@ export default function UploadPage() {
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#6b2d16' }}>
-                  <GraduationCap className="text-white text-sm" />
-                </div>
+                <Logo size="md" />
                 <h1 className="text-xl font-semibold text-white">ClariTA</h1>
                 <span className="text-sm text-white/90 bg-white/20 px-2 py-1 rounded-full">
                   Quiz Generator

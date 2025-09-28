@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Alert, AlertDescription } from './ui/alert';
 import { Brain, Sparkles, ArrowRight } from 'lucide-react';
+import Logo from './Logo';
 
 interface AuthFormProps {
   onSuccess?: () => void;
@@ -108,7 +109,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
             <div className="flex items-center justify-center space-x-4 mb-6">
               <div className="relative">
                 <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-xl" style={{ backgroundColor: '#de8318' }}>
-                  <Brain className="h-9 w-9 text-white" />
+                  <Logo size="lg" />
                 </div>
                 <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#dc5817' }}>
                   <Sparkles className="h-3 w-3 text-white" />

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { FileText, Brain, Plus, LogOut, User, Search, Edit, Trash2, Folder, Tag, MoreHorizontal, TrendingUp, Target, BarChart3, Calendar, CheckCircle, Zap, Award, Trophy, BookOpen, Sparkles, ArrowRight, Upload, Lightbulb, GraduationCap } from "lucide-react";
+import Logo from "@/components/Logo";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedFetch } from "@/lib/api";
 import { useEffect, useState, useMemo } from "react";
@@ -276,7 +277,7 @@ export default function Dashboard() {
             <div className="flex justify-between items-center">
               {/* Logo */}
               <div className="flex items-center space-x-2">
-                <Brain className="h-8 w-8 text-white" />
+                <Logo size="md" />
                 <h1 className="text-2xl font-bold text-white">ClariTA</h1>
               </div>
               

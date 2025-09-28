@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Brain, Menu, X, Users, Info, Sparkles, Heart, Star, Lightbulb, Target } from "lucide-react";
+import Logo from "./Logo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -42,7 +43,7 @@ export default function Header() {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <Brain className="h-8 w-8 text-white" />
+            <Logo size="md" />
             <h1 className="text-2xl font-bold text-white">ClariTA</h1>
           </div>
 
