@@ -57,14 +57,14 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
   const selectedTypesCount = Object.values(questionTypes).filter(Boolean).length;
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-          <Settings className="h-5 w-5 text-primary" />
+    <Card className="p-8 max-w-2xl mx-auto shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 border-0">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#de8318' }}>
+          <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-foreground">Configure Your Quiz</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-2xl font-semibold" style={{ color: '#1F2937' }}>Configure Your Quiz</h2>
+          <p className="text-sm" style={{ color: '#6B7280' }}>
             Choose the number of questions and question types
           </p>
         </div>
@@ -72,8 +72,8 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
 
       <div className="space-y-6">
         {/* Number of Questions */}
-        <div className="space-y-2">
-          <Label htmlFor="numQuestions" className="text-sm font-medium">
+        <div className="space-y-3">
+          <Label htmlFor="numQuestions" className="text-sm font-semibold" style={{ color: '#1F2937' }}>
             Number of Questions
           </Label>
           <Input
@@ -83,56 +83,58 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
             max="100"
             value={numQuestions}
             onChange={(e) => setNumQuestions(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
-            className="w-32"
+            className="w-32 h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs" style={{ color: '#6B7280' }}>
             Choose between 1 and 100 questions
           </p>
         </div>
 
         {/* Question Types */}
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">Question Types</Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-4">
+          <Label className="text-sm font-semibold" style={{ color: '#1F2937' }}>Question Types</Label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {Object.entries(questionTypeLabels).map(([type, label]) => (
-              <div key={type} className="flex items-center space-x-2">
+              <div key={type} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-orange-300 transition-colors">
                 <Checkbox
                   id={type}
                   checked={questionTypes[type as keyof typeof questionTypes]}
                   onCheckedChange={(checked) => 
                     handleQuestionTypeChange(type as keyof typeof questionTypes, checked as boolean)
                   }
+                  className="data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600 border-gray-300"
                 />
                 <Label 
                   htmlFor={type} 
-                  className="text-sm font-normal cursor-pointer"
+                  className="text-sm font-medium cursor-pointer flex-1"
+                  style={{ color: '#1F2937' }}
                 >
                   {label}
                 </Label>
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs" style={{ color: '#6B7280' }}>
             Select at least one question type • {selectedTypesCount} selected
           </p>
         </div>
 
         {/* Generate Button */}
-        <div className="pt-4">
+        <div className="pt-6">
           <Button 
             onClick={handleSubmit}
             disabled={isGenerating || selectedTypesCount === 0}
-            className="w-full"
-            size="lg"
+            className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
+            style={{ backgroundColor: '#F17105' }}
           >
             {isGenerating ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
                 Generating Quiz...
               </>
             ) : (
               <>
-                <Brain className="mr-2 h-4 w-4" />
+                <Brain className="mr-2 h-5 w-5" />
                 Generate Quiz
               </>
             )}
