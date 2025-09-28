@@ -10,6 +10,7 @@ import { QuizConfig, type QuizConfig as QuizConfigType } from "@/components/Quiz
 import { GraduationCap, Brain, FileText, Scale, FileCheck, ArrowLeft, Home } from "lucide-react";
 import Logo from "@/components/Logo";
 import type { Upload } from "@/types/quiz";
+import Header from "@/components/Header";
 
 export default function UploadPage() {
   const [, setLocation] = useLocation();
@@ -89,23 +90,6 @@ export default function UploadPage() {
         background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
       }}
     >
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 opacity-10">
-        {/* Floating circles */}
-        <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-        <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
-        <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
-        <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-        
-        {/* Geometric shapes */}
-        <div className="absolute top-40 left-1/3 w-8 h-8 transform rotate-45" style={{ backgroundColor: '#6b2d16' }}></div>
-        <div className="absolute bottom-40 right-1/4 w-6 h-6 transform rotate-12" style={{ backgroundColor: '#de8318' }}></div>
-        
-        {/* Additional floating elements */}
-        <div className="absolute top-1/2 left-1/6 w-10 h-10 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-        <div className="absolute top-1/3 right-1/6 w-8 h-8 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
-        <div className="absolute bottom-1/3 left-1/2 w-12 h-12 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
-      </div>
 
       <div className="relative z-10">
         {/* Header */}
@@ -136,7 +120,7 @@ export default function UploadPage() {
             /* Upload Section */
             <div className="mb-8">
               <div className="text-center mb-8">
-                <h2 className="text-4xl font-bold mb-4" style={{ color: '#6b2d16' }}>
+                <h2 className="text-4xl font-bold mb-4" style={{ color: '#dc5817' }}>
                   Upload Lecture Slides
                 </h2>
                 <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>
@@ -215,12 +199,12 @@ export default function UploadPage() {
               <div className="text-center mb-8">
                 <Button
                   onClick={handleBackToUpload}
-                  className="mb-6 text-white bg-white/20 border-white/30 hover:bg-white/30 hover:text-white"
+                  className="mb-6 text-white bg-white/40 border-white/60 hover:bg-white/50 hover:text-white shadow-lg"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Upload
                 </Button>
-                <h2 className="text-4xl font-bold mb-4" style={{ color: '#6b2d16' }}>
+                <h2 className="text-4xl font-bold mb-4" style={{ color: '#dc5817' }}>
                   Quiz Configuration
                 </h2>
                 <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>

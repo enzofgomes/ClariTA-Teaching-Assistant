@@ -84,7 +84,11 @@ export function QuizCard({
           >
             {question.options.map((option, index) => (
               <div key={index} className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-                <RadioGroupItem value={index.toString()} id={`${question.id}-${index}`} />
+                <RadioGroupItem 
+                  value={index.toString()} 
+                  id={`${question.id}-${index}`}
+                  className="border-orange-600 text-orange-600 data-[state=checked]:border-orange-600 data-[state=checked]:text-orange-600"
+                />
                 <Label htmlFor={`${question.id}-${index}`} className="flex-1 cursor-pointer">
                   {option}
                 </Label>
@@ -101,11 +105,19 @@ export function QuizCard({
             onValueChange={(value) => onAnswerChange(value === 'true')}
           >
             <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-              <RadioGroupItem value="true" id={`${question.id}-true`} />
+              <RadioGroupItem 
+                value="true" 
+                id={`${question.id}-true`}
+                className="border-orange-600 text-orange-600 data-[state=checked]:border-orange-600 data-[state=checked]:text-orange-600"
+              />
               <Label htmlFor={`${question.id}-true`} className="flex-1 cursor-pointer">True</Label>
             </div>
             <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-              <RadioGroupItem value="false" id={`${question.id}-false`} />
+              <RadioGroupItem 
+                value="false" 
+                id={`${question.id}-false`}
+                className="border-orange-600 text-orange-600 data-[state=checked]:border-orange-600 data-[state=checked]:text-orange-600"
+              />
               <Label htmlFor={`${question.id}-false`} className="flex-1 cursor-pointer">False</Label>
             </div>
           </RadioGroup>

@@ -253,23 +253,6 @@ export default function Dashboard() {
         background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
       }}
     >
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 opacity-10">
-        {/* Floating circles */}
-        <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-        <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
-        <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
-        <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-        
-        {/* Geometric shapes */}
-        <div className="absolute top-40 left-1/3 w-8 h-8 transform rotate-45" style={{ backgroundColor: '#6b2d16' }}></div>
-        <div className="absolute bottom-40 right-1/4 w-6 h-6 transform rotate-12" style={{ backgroundColor: '#de8318' }}></div>
-        
-        {/* Additional floating elements */}
-        <div className="absolute top-1/2 left-1/6 w-10 h-10 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-        <div className="absolute top-1/3 right-1/6 w-8 h-8 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
-        <div className="absolute bottom-1/3 left-1/2 w-12 h-12 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
-      </div>
 
       <div className="relative z-10">
         <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
@@ -307,7 +290,7 @@ export default function Dashboard() {
         <main className="container mx-auto px-4 py-12">
           <div className="mb-12 text-center">
             <h2 className="text-5xl font-bold mb-4" style={{ color: '#6b2d16' }}>
-              Welcome back, <span style={{ color: '#dc5817' }}>{user?.fullName?.split(' ')[0] || 'Student'}!</span>
+              Welcome back, <span style={{ color: '#dc5817' }}>{user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'Student'}!</span>
             </h2>
             <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>
               Upload a new PDF to generate quizzes or view your quiz history. Transform your learning experience with AI-powered assessments!
@@ -317,7 +300,7 @@ export default function Dashboard() {
         <div className="grid lg:grid-cols-3 gap-8">
             {/* Quick Actions */}
             <div className="lg:col-span-1">
-              <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:scale-105">
+              <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="pb-6">
                   <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
                     <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#de8318' }}>
@@ -341,132 +324,205 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-            {/* Learning Statistics */}
-            <Card className="mt-8 border-0 shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
-              <CardHeader className="pb-6">
-                <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#dc5817' }}>
-                    <BarChart3 className="h-5 w-5 text-white" />
-                  </div>
-                  Learning Statistics
-                </CardTitle>
-                <CardDescription className="text-lg" style={{ color: '#1F2937' }}>
-                  Your quiz performance and progress metrics
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {statsLoading ? (
-                  <div className="text-center py-4 text-gray-500">Loading statistics...</div>
-                ) : statsError ? (
-                  <div className="text-center py-4 text-red-500">
-                    <p>Error loading statistics</p>
-                    <p className="text-xs text-gray-400 mt-1">{statsError.message}</p>
-                  </div>
-                ) : userStats ? (
-                  <div className="space-y-6">
-                    {/* Main Stats Grid */}
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                        <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                          {userStats.quizzesCompletedThisMonth}
-                        </div>
-                        <div className="text-xs text-blue-600 dark:text-blue-400">This Month</div>
-                      </div>
+              {/* Stats */}
+              <Card className="mt-8 border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#dc5817' }}>
+                      <BarChart3 className="h-5 w-5 text-white" />
                     </div>
-
-                    {/* Streaks */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Zap className="h-4 w-4" />
-                        Streaks
-                      </h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded">
-                          <div className="font-semibold text-orange-600 dark:text-orange-400">
-                            {userStats.currentStreak}
+                    Your Statistics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {statsLoading ? (
+                    <div className="text-center py-4 text-gray-500">Loading statistics...</div>
+                  ) : statsError ? (
+                    <div className="text-center py-4 text-red-500">
+                      <p>Error loading statistics</p>
+                      <p className="text-xs text-gray-400 mt-1">{statsError.message}</p>
+                    </div>
+                  ) : userStats ? (
+                    <div className="space-y-6">
+                      {/* Main Stats Grid */}
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                          <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            {userStats.quizzesCompletedThisMonth}
                           </div>
-                          <div className="text-xs text-orange-600 dark:text-orange-400">Current</div>
-                        </div>
-                        <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded">
-                          <div className="font-semibold text-purple-600 dark:text-purple-400">
-                            {userStats.maxStreak}
-                          </div>
-                          <div className="text-xs text-purple-600 dark:text-purple-400">Best</div>
+                          <div className="text-xs text-blue-600 dark:text-blue-400">This Month</div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Performance Metrics */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Award className="h-4 w-4" />
-                        Performance
-                      </h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 dark:text-gray-400">Accuracy Rate</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div 
-                                className="bg-green-500 h-2 rounded-full" 
-                                style={{ width: `${Math.min(userStats.accuracyRate, 100)}%` }}
-                              ></div>
+                      {/* Streaks */}
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <Zap className="h-4 w-4" />
+                          Streaks
+                        </h4>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded">
+                            <div className="font-semibold text-orange-600 dark:text-orange-400">
+                              {userStats.currentStreak}
                             </div>
-                            <span className="font-medium w-12 text-right">{userStats.accuracyRate}%</span>
+                            <div className="text-xs text-orange-600 dark:text-orange-400">Current</div>
                           </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 dark:text-gray-400">Average Score</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div 
-                                className="bg-blue-500 h-2 rounded-full" 
-                                style={{ width: `${Math.min(userStats.averageScore, 100)}%` }}
-                              ></div>
+                          <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded">
+                            <div className="font-semibold text-purple-600 dark:text-purple-400">
+                              {userStats.maxStreak}
                             </div>
-                            <span className="font-medium w-12 text-right">{userStats.averageScore}%</span>
+                            <div className="text-xs text-purple-600 dark:text-purple-400">Best</div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Total Activity */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Trophy className="h-4 w-4" />
-                        Total Activity
-                      </h4>
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded">
-                          <div className="font-semibold text-indigo-600 dark:text-indigo-400">
-                            {userStats.totalQuizzesTaken}
+                      {/* Performance Metrics */}
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <Award className="h-4 w-4" />
+                          Performance
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600 dark:text-gray-400">Accuracy Rate</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className="bg-green-500 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(userStats.accuracyRate, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="font-medium w-12 text-right">{userStats.accuracyRate}%</span>
+                            </div>
                           </div>
-                          <div className="text-xs text-indigo-600 dark:text-indigo-400">Quizzes Taken</div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600 dark:text-gray-400">Average Score</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-500 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(userStats.averageScore, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="font-medium w-12 text-right">{userStats.averageScore}%</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
-                          <div className="font-semibold text-gray-600 dark:text-gray-400">
-                            {userStats.totalQuizzesGenerated}
+                      </div>
+
+                      {/* Total Activity */}
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <Trophy className="h-4 w-4" />
+                          Total Activity
+                        </h4>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded">
+                            <div className="font-semibold text-indigo-600 dark:text-indigo-400">
+                              {userStats.totalQuizzesTaken}
+                            </div>
+                            <div className="text-xs text-indigo-600 dark:text-indigo-400">Quizzes Taken</div>
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400">Quizzes Generated</div>
+                          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                            <div className="font-semibold text-gray-600 dark:text-gray-400">
+                              {userStats.totalQuizzesGenerated}
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400">Quizzes Generated</div>
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ) : (
+                    <div className="text-center py-4 text-gray-500">
+                      <BookOpen className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <p>No statistics available yet</p>
+                      <p className="text-xs text-gray-400 mt-1">Complete some quizzes to see your progress</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Milestones */}
+              <Card className="mt-8 border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#6b2d16' }}>
+                      <GraduationCap className="h-5 w-5 text-white" />
+                    </div>
+                    Milestones
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {(() => {
+                      const quizCount = quizzes?.length || 0;
+                      const milestones = [
+                        { count: 1, message: "First quiz completed! 🎉", achieved: quizCount >= 1 },
+                        { count: 5, message: "You have completed 5 quizzes! 🚀", achieved: quizCount >= 5 },
+                        { count: 10, message: "Amazing! 10 quizzes completed! ⭐", achieved: quizCount >= 10 },
+                        { count: 25, message: "Incredible! 25 quizzes completed! 🏆", achieved: quizCount >= 25 },
+                        { count: 50, message: "Legendary! 50 quizzes completed! 👑", achieved: quizCount >= 50 }
+                      ];
+                      
+                      const nextMilestone = milestones.find(m => !m.achieved);
+                      const lastAchieved = milestones.filter(m => m.achieved).pop();
+                      
+                      return (
+                        <div className="space-y-3">
+                          {lastAchieved && (
+                            <div className="p-4 rounded-lg border-2" style={{ backgroundColor: '#f0f9ff', borderColor: '#dc5817' }}>
+                              <div className="flex items-center space-x-2">
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#dc5817' }}>
+                                  <span className="text-white text-sm">✓</span>
+                                </div>
+                                <span className="font-semibold text-lg" style={{ color: '#6b2d16' }}>
+                                  {lastAchieved.message}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {nextMilestone && (
+                            <div className="p-4 rounded-lg" style={{ backgroundColor: '#fef7e0' }}>
+                              <div className="flex items-center space-x-2">
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#f5e2aa' }}>
+                                  <span className="text-sm" style={{ color: '#6b2d16' }}>{nextMilestone.count}</span>
+                                </div>
+                                <span className="text-lg" style={{ color: '#6b2d16' }}>
+                                  {quizCount} / {nextMilestone.count} quizzes to unlock: "{nextMilestone.message}"
+                                </span>
+                              </div>
+                              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="h-2 rounded-full transition-all duration-500" 
+                                  style={{ 
+                                    backgroundColor: '#dc5817',
+                                    width: `${Math.min((quizCount / nextMilestone.count) * 100, 100)}%`
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {quizCount === 0 && (
+                            <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#fef7e0' }}>
+                              <span className="text-lg" style={{ color: '#6b2d16' }}>
+                                Complete your first quiz to start earning milestones! 🎯
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
-                ) : (
-                  <div className="text-center py-4 text-gray-500">
-                    <BookOpen className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                    <p>No statistics available yet</p>
-                    <p className="text-xs text-gray-400 mt-1">Complete some quizzes to see your progress</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Quiz Management */}
             <div className="lg:col-span-2">
-              <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
+              <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:scale-105">
                 <CardHeader className="pb-6">
                   <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
                     <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#6b2d16' }}>

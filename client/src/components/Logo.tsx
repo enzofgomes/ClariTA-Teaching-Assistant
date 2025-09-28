@@ -34,7 +34,6 @@ const Logo: React.FC<LogoProps> = ({ size = 'md', className = '' }) => {
         src="/assets/images/fox-logo.png"
         alt="ClariTA Fox Logo"
         className="w-full h-full object-contain"
-        style={{ imageRendering: 'pixelated' }}
         onError={handleImageError}
       />
     </div>
