@@ -5,3 +5,7 @@ client/.env
 # Optional: other env patterns
 *.env
 .env.*
+.env
+client/.env
+*.env
+.env.*
