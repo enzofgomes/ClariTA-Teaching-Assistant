@@ -88,7 +88,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
         {/* Header */}
         <header className="w-full py-12">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-center space-x-4 mb-6">
+            <div className="flex items-center justify-center space-x-2 mb-6">
               <div className="relative">
                 <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-xl" style={{ backgroundColor: '#de8318' }}>
                   <Logo size="lg" />
@@ -116,7 +116,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
 
         {/* Auth Form */}
         <div className="flex items-center justify-center px-4 pb-12">
-          <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm :shadhoverow-3xl transition-all duration-300 hover:scale-105">
+          <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
             <CardHeader className="text-center pb-8 pt-8">
               <CardTitle className="text-3xl font-bold" style={{ color: '#6b2d16' }}>
                 Welcome Back
@@ -183,7 +183,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                     )}
                     <Button 
                       type="submit" 
-                      className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
+                      className="w-full h-12 text-white font-semibold text-lg shadow-lg  rounded-lg"
                       style={{ backgroundColor: '#de8318' }}
                       disabled={isLoading}
                     >
@@ -253,7 +253,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                     )}
                     <Button 
                       type="submit" 
-                      className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
+                      className="w-full h-12 text-white font-semibold text-lg shadow-lg  rounded-lg"
                       style={{ backgroundColor: '#de8318' }}
                       disabled={isLoading}
                     >

@@ -97,20 +97,23 @@ export default function UploadPage() {
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Logo size="md" />
-                <h1 className="text-xl font-semibold text-white">ClariTA</h1>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setLocation('/dashboard')}
+                  className="text-white"
+                  data-testid="button-back-to-dashboard"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div className="flex items-center space-x-1">
+                  <Logo size="md" />
+                  <h1 className="text-xl font-semibold text-white">ClariTA</h1>
+                </div>
                 <span className="text-sm text-white/90 bg-white/20 px-2 py-1 rounded-full">
                   Quiz Generator
                 </span>
               </div>
-              <Button
-                onClick={() => setLocation('/dashboard')}
-                className="text-white bg-white/20 border-white/30 hover:bg-white/30 hover:text-white"
-                data-testid="button-back-to-dashboard"
-              >
-                <Home className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
             </div>
           </div>
         </header>
@@ -133,7 +136,7 @@ export default function UploadPage() {
             {/* Upload Results */}
             {uploadResult && (
               <div className="mt-8 fade-in">
-                <Card className="p-6 border-0 shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
+                <Card className="p-6 border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-semibold text-xl" style={{ color: '#1F2937' }}>Upload Successful</h3>
                     <span className="text-sm bg-green-100 text-green-800 px-3 py-2 rounded-full font-medium">
@@ -182,7 +185,7 @@ export default function UploadPage() {
                   
                   <Button 
                     onClick={() => setShowConfig(true)}
-                    className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
+                    className="w-full h-12 text-white font-semibold text-lg shadow-lg rounded-lg"
                     style={{ backgroundColor: '#F17105' }}
                     data-testid="button-configure-quiz"
                   >
@@ -199,7 +202,7 @@ export default function UploadPage() {
               <div className="text-center mb-8">
                 <Button
                   onClick={handleBackToUpload}
-                  className="mb-6 text-white bg-white/40 border-white/60 hover:bg-white/50 hover:text-white shadow-lg"
+                  className="mb-6 text-white bg-orange-600/80 border-orange-700/60 shadow-lg"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Upload

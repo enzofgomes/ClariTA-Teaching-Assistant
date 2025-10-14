@@ -69,7 +69,7 @@ export function Uploader({ onUploadSuccess }: UploaderProps) {
   return (
     <div
       {...getRootProps()}
-      className={`drag-zone border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 hover:border-orange-300 hover:shadow-2xl hover:-translate-y-1 hover:scale-105 ${
+      className={`drag-zone border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${
         isDragOver ? 'border-orange-400 bg-orange-50' : 'border-orange-200'
       } ${uploadMutation.isPending ? 'opacity-50 pointer-events-none' : ''}`}
       style={{ backgroundColor: '#fef7e0' }}
@@ -90,7 +90,7 @@ export function Uploader({ onUploadSuccess }: UploaderProps) {
             or{" "}
             <Button
               variant="link"
-              className="p-0 h-auto hover:underline"
+              className="p-0 h-auto"
               style={{ color: '#dc5817' }}
               onClick={open}
               disabled={uploadMutation.isPending}

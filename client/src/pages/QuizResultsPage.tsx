@@ -173,8 +173,10 @@ export default function QuizResultsPage() {
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
-                <Logo size="md" />
-                <h1 className="text-xl font-semibold text-white">ClariTA</h1>
+                <div className="flex items-center space-x-1">
+                  <Logo size="md" />
+                  <h1 className="text-xl font-semibold text-white">ClariTA</h1>
+                </div>
                 <span className="text-sm text-white/90 bg-white/20 px-2 py-1 rounded-full">
                   Quiz Results
                 </span>

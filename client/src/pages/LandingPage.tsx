@@ -258,7 +258,7 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 py-8 relative z-10">
           <div className="text-center text-white">
-            <div className="flex items-center justify-center space-x-2 mb-4">
+            <div className="flex items-center justify-center space-x-1 mb-4">
               <Logo size="sm" />
               <span className="text-lg font-semibold">ClariTA</span>
             </div>

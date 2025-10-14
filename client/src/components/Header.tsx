@@ -37,7 +37,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Logo size="md" />
             <h1 className="text-2xl font-bold text-white">ClariTA</h1>
           </div>

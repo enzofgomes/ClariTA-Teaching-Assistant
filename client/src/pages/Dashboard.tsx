@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { FileText, Brain, Plus, LogOut, User, Search, Edit, Trash2, Folder, Tag, MoreHorizontal, TrendingUp, Target, BarChart3, Calendar, CheckCircle, Zap, Award, Trophy, BookOpen, Sparkles, ArrowRight, Upload, Lightbulb, GraduationCap } from "lucide-react";
+import { FileText, Brain, Plus, LogOut, User, Search, Edit, Trash2, Folder, Tag, MoreHorizontal, TrendingUp, Target, BarChart3, BadgePercent, Calendar, CheckCircle, Zap, Award, Trophy, BookOpen, Sparkles, ArrowRight, Upload, Lightbulb, GraduationCap, PencilLine, BookMarked } from "lucide-react";
 import Logo from "@/components/Logo";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedFetch } from "@/lib/api";
@@ -259,7 +259,7 @@ export default function Dashboard() {
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               {/* Logo */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1">
                 <Logo size="md" />
                 <h1 className="text-2xl font-bold text-white">ClariTA</h1>
               </div>
@@ -325,11 +325,11 @@ export default function Dashboard() {
               </Card>
 
               {/* Stats */}
-              <Card className="mt-8 border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+              <Card className="mt-8 border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
                 <CardHeader className="pb-6">
                   <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
                     <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#dc5817' }}>
-                      <BarChart3 className="h-5 w-5 text-white" />
+                      <BadgePercent className="h-5 w-5 text-white" />
                     </div>
                     Your Statistics
                   </CardTitle>
@@ -442,91 +442,15 @@ export default function Dashboard() {
                   )}
                 </CardContent>
               </Card>
-
-              {/* Milestones */}
-              <Card className="mt-8 border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 hover:scale-105">
-                <CardHeader className="pb-6">
-                  <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#6b2d16' }}>
-                      <GraduationCap className="h-5 w-5 text-white" />
-                    </div>
-                    Milestones
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {(() => {
-                      const quizCount = quizzes?.length || 0;
-                      const milestones = [
-                        { count: 1, message: "First quiz completed! 🎉", achieved: quizCount >= 1 },
-                        { count: 5, message: "You have completed 5 quizzes! 🚀", achieved: quizCount >= 5 },
-                        { count: 10, message: "Amazing! 10 quizzes completed! ⭐", achieved: quizCount >= 10 },
-                        { count: 25, message: "Incredible! 25 quizzes completed! 🏆", achieved: quizCount >= 25 },
-                        { count: 50, message: "Legendary! 50 quizzes completed! 👑", achieved: quizCount >= 50 }
-                      ];
-                      
-                      const nextMilestone = milestones.find(m => !m.achieved);
-                      const lastAchieved = milestones.filter(m => m.achieved).pop();
-                      
-                      return (
-                        <div className="space-y-3">
-                          {lastAchieved && (
-                            <div className="p-4 rounded-lg border-2" style={{ backgroundColor: '#f0f9ff', borderColor: '#dc5817' }}>
-                              <div className="flex items-center space-x-2">
-                                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#dc5817' }}>
-                                  <span className="text-white text-sm">✓</span>
-                                </div>
-                                <span className="font-semibold text-lg" style={{ color: '#6b2d16' }}>
-                                  {lastAchieved.message}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                          
-                          {nextMilestone && (
-                            <div className="p-4 rounded-lg" style={{ backgroundColor: '#fef7e0' }}>
-                              <div className="flex items-center space-x-2">
-                                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#f5e2aa' }}>
-                                  <span className="text-sm" style={{ color: '#6b2d16' }}>{nextMilestone.count}</span>
-                                </div>
-                                <span className="text-lg" style={{ color: '#6b2d16' }}>
-                                  {quizCount} / {nextMilestone.count} quizzes to unlock: "{nextMilestone.message}"
-                                </span>
-                              </div>
-                              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                                <div 
-                                  className="h-2 rounded-full transition-all duration-500" 
-                                  style={{ 
-                                    backgroundColor: '#dc5817',
-                                    width: `${Math.min((quizCount / nextMilestone.count) * 100, 100)}%`
-                                  }}
-                                ></div>
-                              </div>
-                            </div>
-                          )}
-                          
-                          {quizCount === 0 && (
-                            <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#fef7e0' }}>
-                              <span className="text-lg" style={{ color: '#6b2d16' }}>
-                                Complete your first quiz to start earning milestones! 🎯
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </CardContent>
-              </Card>
             </div>
 
             {/* Quiz Management */}
             <div className="lg:col-span-2">
-              <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:scale-105">
+              <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
                 <CardHeader className="pb-6">
                   <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
                     <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#6b2d16' }}>
-                      <Brain className="h-5 w-5 text-white" />
+                      <BookMarked className="h-5 w-5 text-white" />
                     </div>
                     Quiz Management
                   </CardTitle>
@@ -576,7 +500,7 @@ export default function Dashboard() {
                           >
                             <div className="flex items-center space-x-4 flex-1">
                               <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#de8318' }}>
-                                <Brain className="h-6 w-6 text-white" />
+                                <PencilLine className="h-6 w-6 text-white" />
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
