@@ -13,15 +13,15 @@ ClariTA is an innovative AI-powered teaching assistant that automatically genera
 
 ### ✨ Key Features
 
-- **📄 PDF Upload & Processing**: Upload lecture slides and extract content automatically
-- **🤖 AI Quiz Generation**: Generate multiple question types (MCQ, True/False, Fill-in-the-blank)
-- **📊 Interactive Dashboard**: Track progress, view statistics, and manage quizzes
-- **🎯 Customizable Quizzes**: Configure question count and types
-- **📈 Performance Analytics**: Detailed results and explanations
-- **🔐 Secure Authentication**: User accounts with Supabase integration
-- **📱 Responsive Design**: Works seamlessly on desktop and mobile
+- **PDF Upload & Processing**: Upload lecture slides and extract content automatically
+- **AI Quiz Generation**: Generate multiple question types (MCQ, True/False, Fill-in-the-blank)
+- **Interactive Dashboard**: Track progress, view statistics, and manage quizzes
+- **Customizable Quizzes**: Configure question count and types
+- **Performance Analytics**: Detailed results and explanations
+- **Secure Authentication**: User accounts with Supabase integration
+- **Responsive Design**: Works seamlessly on desktop and mobile
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -76,7 +76,7 @@ ClariTA is an innovative AI-powered teaching assistant that automatically genera
 6. **Open your browser**
    Navigate to `http://localhost:3000`
 
-## 🏗️ Architecture
+## Architecture
 
 ### Frontend (React + TypeScript)
 - **Framework**: React 18 with TypeScript
@@ -131,7 +131,7 @@ CREATE TABLE quiz_attempts (
 );
 ```
 
-## 🎨 Design System
+## Design System
 
 ### Color Palette
 - **Primary Orange**: `#de8318` - Main brand color
@@ -212,7 +212,7 @@ ClariTA-Teaching-Assistant/
 ### Statistics
 - `GET /api/user/statistics` - Get user performance stats
 
-## 🧪 Testing
+## Testing
 
 ### Running Tests
 ```bash
@@ -231,7 +231,7 @@ npm run test:coverage
 - **Integration Tests**: API endpoint testing
 - **E2E Tests**: Full user workflow testing
 
-## 🚀 Deployment
+## Deployment
 
 ### Production Build
 ```bash
@@ -253,7 +253,7 @@ GEMINI_API_KEY=your_production_gemini_api_key
 - **Railway**: Full-stack deployment with database
 - **Docker**: Containerized deployment
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please follow these steps:
 
@@ -279,11 +279,11 @@ We welcome contributions! Please follow these steps:
 - Follow the existing code style
 - Ensure responsive design
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👥 Team
+## Team
 
 **ClariTA Development Team**
 - **Enzo** - BS Information Technology | FIU | First Time Hacker
@@ -291,7 +291,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Fabianne** - [Role and background]  
 - **Veronica** - [Role and background]
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Supabase** for authentication and database services
 - **Google Gemini** for AI-powered quiz generation
@@ -299,13 +299,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Tailwind CSS** for utility-first styling
 - **React** and **TypeScript** communities for excellent tooling
 
-## 📞 Support
+## Support
 
 - **Issues**: [GitHub Issues](https://github.com/your-username/ClariTA-Teaching-Assistant/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/ClariTA-Teaching-Assistant/discussions)
 - **Email**: support@clarita.app
 
-## 🔮 Roadmap
+## Roadmap
 
 ### Upcoming Features
 - [ ] **Multi-language Support** - Support for multiple languages
