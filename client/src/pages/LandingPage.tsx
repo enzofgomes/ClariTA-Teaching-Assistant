@@ -20,13 +20,13 @@ export default function HomePage() {
       step: "2", 
       icon: Zap,
       title: "AI Creates Questions",
-      description: "Our super smart AI analyzes your content and creates amazing quizzes with multiple choice, true/false, and short answer questions!"
+      description: "An advanced AI analyzes your content and creates diverse quizzes to support your learning. You will always get a new challenge!"
     },
     {
       step: "3",
       icon: Brain,
-      title: "Take & Learn",
-      description: "Get personalized feedback and explanations for each answer to boost your understanding and memory! You'll learn faster!"
+      title: "Grading",
+    description: "Get personalized feedback and explanations for each answer to boost your understanding and learning with unlimited tries!"
     }
   ];
 
@@ -44,7 +44,7 @@ export default function HomePage() {
     {
       icon: Target,
       title: "Personalized Learning",
-      description: "Smart questioning helps find knowledge gaps and reinforces key concepts for better memory! You'll ace it!"
+      description: "Smart questioning helps find knowledge gaps and reinforces key concepts for better memory! Don't just memorize, learn it!"
     }
   ];
 
@@ -76,7 +76,7 @@ export default function HomePage() {
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ color: '#09224E' }}>
               Transform Your Lecture Slides Into 
-              <span style={{ color: '#61C2A2' }}> Interactive Quizzes</span>
+              <span style={{ color: '#ffffff' }}> Interactive Quizzes</span>
             </h1>
 
             <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed" style={{ color: '#09224E' }}>
@@ -107,16 +107,16 @@ export default function HomePage() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: '#61C2A2' }}>1000+</div>
-                <div style={{ color: '#09224E' }}>Quizzes Generated</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#B6E2D3' }}>1000+</div>
+                <div style={{ color: '#ffffff' }}>Quizzes Generated</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: '#61C2A2' }}>670+</div>
-                <div style={{ color: '#09224E' }}>Happy Students</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#B6E2D3' }}>670+</div>
+                <div style={{ color: '#ffffff' }}>Happy Students</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: '#61C2A2' }}>95%</div>
-                <div style={{ color: '#09224E' }}>Accuracy Rate</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#B6E2D3' }}>95%</div>
+                <div style={{ color: '#ffffff' }}>Accuracy Rate</div>
               </div>
             </div>
           </div>

@@ -60,8 +60,7 @@ export default function Header() {
                 </DialogHeader>
                 <div className="space-y-4">
                   <p style={{ color: '#09224E' }}>
-                    <strong>ClariTA makes studying easier!</strong> Simply upload your PDF lecture slides and our AI 
-                    automatically creates practice quizzes to help you study better.
+                    ClariTA is a small personal project aimed to make studying more dynamic. It was built by a student for students that strugle. I hope you enjoy the platform and it helps you study better.
                   </p>
                   <p style={{ color: '#09224E' }}>
                     <strong>How it works:</strong>
@@ -77,44 +76,6 @@ export default function Header() {
                       Great for exam prep and understanding your course material better.
                     </p>
                   </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-2 text-white bg-white/20 hover:bg-white/30 hover:text-white group">
-                  <div className="relative">
-                    <Users className="h-4 w-4 transition-transform group-hover:scale-110" />
-                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-pink-300 rounded-full animate-pulse"></div>
-                  </div>
-                  <span>The Team</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl" style={{ backgroundColor: '#f8fafc' }}>
-                <DialogHeader>
-                  <DialogTitle style={{ color: '#09224E' }}>Meet Our Team</DialogTitle>
-                </DialogHeader>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {teamMembers.map((member, index) => (
-                    <Card key={index} className="border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-300">
-                      <CardContent className="p-6">
-                        <div className="flex items-start space-x-4">
-                          <div className="h-12 w-12 flex-shrink-0">
-                            <Logo size="sm" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold mb-2" style={{ color: '#09224E' }}>
-                              {member.name}
-                            </h3>
-                            <p className="text-sm leading-relaxed" style={{ color: '#09224E' }}>
-                              {member.description}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
                 </div>
               </DialogContent>
             </Dialog>
