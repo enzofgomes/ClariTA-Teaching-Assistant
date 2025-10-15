@@ -82,7 +82,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)' }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #B6E2D3 0%, #BDBFA3 50%, #B6E2D3 100%)' }}>
 
       <div className="relative z-10">
         {/* Header */}
@@ -90,24 +90,24 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-center space-x-2 mb-6">
               <div className="relative">
-                <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-xl" style={{ backgroundColor: '#de8318' }}>
+                <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-xl" style={{ backgroundColor: '#61C2A2' }}>
                   <Logo size="lg" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#dc5817' }}>
+                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#09224E' }}>
                   <Sparkles className="h-3 w-3 text-white" />
                 </div>
               </div>
               <div className="text-center">
-                <h1 className="text-4xl font-bold" style={{ color: '#6b2d16' }}>
+                <h1 className="text-4xl font-bold" style={{ color: '#09224E' }}>
                   ClariTA
                 </h1>
-                <p className="text-lg font-medium" style={{ color: '#6b2d16' }}>
+                <p className="text-lg font-medium" style={{ color: '#09224E' }}>
                   Teaching Assistant
                 </p>
               </div>
             </div>
             <div className="text-center">
-              <p className="max-w-2xl mx-auto text-lg leading-relaxed" style={{ color: '#6b2d16' }}>
+              <p className="max-w-2xl mx-auto text-lg leading-relaxed" style={{ color: '#09224E' }}>
                 Transform your lecture slides into interactive quizzes with AI-powered intelligence
               </p>
             </div>
@@ -118,10 +118,10 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
         <div className="flex items-center justify-center px-4 pb-12">
           <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
             <CardHeader className="text-center pb-8 pt-8">
-              <CardTitle className="text-3xl font-bold" style={{ color: '#6b2d16' }}>
+              <CardTitle className="text-3xl font-bold" style={{ color: '#09224E' }}>
                 Welcome Back
               </CardTitle>
-              <CardDescription className="text-lg" style={{ color: '#6b2d16' }}>
+              <CardDescription className="text-lg" style={{ color: '#09224E' }}>
                 Sign in to your account or create a new one to get started
               </CardDescription>
             </CardHeader>
@@ -131,14 +131,14 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                   <TabsTrigger 
                     value="signin" 
                     className="data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
-                    style={{ color: '#6b2d16' }}
+                    style={{ color: '#09224E' }}
                   >
                     Sign In
                   </TabsTrigger>
                   <TabsTrigger 
                     value="signup" 
                     className="data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
-                    style={{ color: '#6b2d16' }}
+                    style={{ color: '#09224E' }}
                   >
                     Sign Up
                   </TabsTrigger>
@@ -147,7 +147,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                 <TabsContent value="signin" className="mt-8">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-3">
-                      <Label htmlFor="email" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
+                      <Label htmlFor="email" className="text-sm font-semibold" style={{ color: '#09224E' }}>
                         Email Address
                       </Label>
                       <Input
@@ -156,12 +156,12 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
-                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
+                        className="h-12 border-gray-200 focus:border-teal-600 focus:ring-teal-600 rounded-lg text-base"
                         placeholder="Enter your email"
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label htmlFor="password" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
+                      <Label htmlFor="password" className="text-sm font-semibold" style={{ color: '#09224E' }}>
                         Password
                       </Label>
                       <Input
@@ -170,7 +170,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         required
-                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
+                        className="h-12 border-gray-200 focus:border-teal-600 focus:ring-teal-600 rounded-lg text-base"
                         placeholder="Enter your password"
                       />
                     </div>
@@ -184,7 +184,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                     <Button 
                       type="submit" 
                       className="w-full h-12 text-white font-semibold text-lg shadow-lg  rounded-lg"
-                      style={{ backgroundColor: '#de8318' }}
+                      style={{ backgroundColor: '#61C2A2' }}
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -205,7 +205,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                 <TabsContent value="signup" className="mt-8">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-3">
-                      <Label htmlFor="signup-email" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
+                      <Label htmlFor="signup-email" className="text-sm font-semibold" style={{ color: '#09224E' }}>
                         Email Address
                       </Label>
                       <Input
@@ -214,24 +214,24 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
-                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
+                        className="h-12 border-gray-200 focus:border-teal-600 focus:ring-teal-600 rounded-lg text-base"
                         placeholder="Enter your email"
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label htmlFor="fullName" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
+                      <Label htmlFor="fullName" className="text-sm font-semibold" style={{ color: '#09224E' }}>
                         Full Name
                       </Label>
                       <Input
                         id="fullName"
                         value={formData.fullName}
                         onChange={(e) => handleInputChange('fullName', e.target.value)}
-                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
+                        className="h-12 border-gray-200 focus:border-teal-600 focus:ring-teal-600 rounded-lg text-base"
                         placeholder="Full name"
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label htmlFor="signup-password" className="text-sm font-semibold" style={{ color: '#6b2d16' }}>
+                      <Label htmlFor="signup-password" className="text-sm font-semibold" style={{ color: '#09224E' }}>
                         Password
                       </Label>
                       <Input
@@ -240,7 +240,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         required
-                        className="h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
+                        className="h-12 border-gray-200 focus:border-teal-600 focus:ring-teal-600 rounded-lg text-base"
                         placeholder="Create a password"
                       />
                     </div>
@@ -254,7 +254,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps = {}) {
                     <Button 
                       type="submit" 
                       className="w-full h-12 text-white font-semibold text-lg shadow-lg  rounded-lg"
-                      style={{ backgroundColor: '#de8318' }}
+                      style={{ backgroundColor: '#61C2A2' }}
                       disabled={isLoading}
                     >
                       {isLoading ? (

@@ -59,7 +59,7 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
   return (
     <Card className="p-8 max-w-2xl mx-auto shadow-2xl bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 border-0">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#de8318' }}>
+        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#61C2A2' }}>
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
@@ -83,7 +83,7 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
             max="100"
             value={numQuestions}
             onChange={(e) => setNumQuestions(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
-            className="w-32 h-12 border-gray-200 focus:border-orange-600 focus:ring-orange-600 rounded-lg text-base"
+            className="w-32 h-12 border-gray-200 focus:border-teal-600 focus:ring-teal-600 rounded-lg text-base"
           />
           <p className="text-xs" style={{ color: '#6B7280' }}>
             Choose between 1 and 100 questions
@@ -95,14 +95,14 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
           <Label className="text-sm font-semibold" style={{ color: '#1F2937' }}>Question Types</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {Object.entries(questionTypeLabels).map(([type, label]) => (
-              <div key={type} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-orange-300 transition-colors">
+              <div key={type} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-teal-300 transition-colors">
                 <Checkbox
                   id={type}
                   checked={questionTypes[type as keyof typeof questionTypes]}
                   onCheckedChange={(checked) => 
                     handleQuestionTypeChange(type as keyof typeof questionTypes, checked as boolean)
                   }
-                  className="data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600 border-gray-300"
+                  className="data-[state=checked]:bg-teal-600 data-[state=checked]:border-teal-600 border-gray-300"
                 />
                 <Label 
                   htmlFor={type} 
@@ -125,7 +125,7 @@ export function QuizConfig({ onConfigSubmit, isGenerating }: QuizConfigProps) {
             onClick={handleSubmit}
             disabled={isGenerating || selectedTypesCount === 0}
             className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
-            style={{ backgroundColor: '#F17105' }}
+            style={{ backgroundColor: '#09224E' }}
           >
             {isGenerating ? (
               <>

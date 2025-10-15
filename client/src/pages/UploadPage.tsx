@@ -87,13 +87,13 @@ export default function UploadPage() {
     <div 
       className="min-h-screen relative overflow-hidden" 
       style={{ 
-        background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
+        background: 'linear-gradient(135deg, #B6E2D3 0%, #BDBFA3 50%, #B6E2D3 100%)'
       }}
     >
 
       <div className="relative z-10">
         {/* Header */}
-        <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
+        <header className="shadow-sm" style={{ backgroundColor: '#61C2A2' }}>
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -123,10 +123,10 @@ export default function UploadPage() {
             /* Upload Section */
             <div className="mb-8">
               <div className="text-center mb-8">
-                <h2 className="text-4xl font-bold mb-4" style={{ color: '#dc5817' }}>
+                <h2 className="text-4xl font-bold mb-4" style={{ color: '#09224E' }}>
                   Upload Lecture Slides
                 </h2>
-                <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>
+                <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#09224E' }}>
                   Upload a PDF of your lecture slides to generate an instant quiz with AI-powered assessments!
                 </p>
               </div>
@@ -138,7 +138,7 @@ export default function UploadPage() {
               <div className="mt-8 fade-in">
                 <Card className="p-6 border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="font-semibold text-xl" style={{ color: '#1F2937' }}>Upload Successful</h3>
+                    <h3 className="font-semibold text-xl" style={{ color: '#09224E' }}>Upload Successful</h3>
                     <span className="text-sm bg-green-100 text-green-800 px-3 py-2 rounded-full font-medium">
                       <FileCheck className="w-4 h-4 inline mr-2" />
                       Complete
@@ -147,11 +147,11 @@ export default function UploadPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div className="flex items-center space-x-3 p-4 rounded-lg" style={{ backgroundColor: '#F9FAFB' }}>
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#dc5817' }}>
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#61C2A2' }}>
                         <FileText className="text-white" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold" style={{ color: '#1F2937' }} data-testid="text-filename">
+                        <p className="text-sm font-semibold" style={{ color: '#09224E' }} data-testid="text-filename">
                           {uploadResult.fileName}
                         </p>
                         <p className="text-xs" style={{ color: '#6B7280' }}>File name</p>
@@ -159,11 +159,11 @@ export default function UploadPage() {
                     </div>
                     
                     <div className="flex items-center space-x-3 p-4 rounded-lg" style={{ backgroundColor: '#F9FAFB' }}>
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#de8318' }}>
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#61C2A2' }}>
                         <Scale className="text-white" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold" style={{ color: '#1F2937' }} data-testid="text-filesize">
+                        <p className="text-sm font-semibold" style={{ color: '#09224E' }} data-testid="text-filesize">
                           {(uploadResult.fileSize / (1024 * 1024)).toFixed(1)} MB
                         </p>
                         <p className="text-xs" style={{ color: '#6B7280' }}>File size</p>
@@ -171,11 +171,11 @@ export default function UploadPage() {
                     </div>
                     
                     <div className="flex items-center space-x-3 p-4 rounded-lg" style={{ backgroundColor: '#F9FAFB' }}>
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#6b2d16' }}>
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#09224E' }}>
                         <FileText className="text-white" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold" style={{ color: '#1F2937' }} data-testid="text-pagecount">
+                        <p className="text-sm font-semibold" style={{ color: '#09224E' }} data-testid="text-pagecount">
                           {uploadResult.pageCount} pages
                         </p>
                         <p className="text-xs" style={{ color: '#6B7280' }}>Page count</p>
@@ -186,7 +186,7 @@ export default function UploadPage() {
                   <Button 
                     onClick={() => setShowConfig(true)}
                     className="w-full h-12 text-white font-semibold text-lg shadow-lg rounded-lg"
-                    style={{ backgroundColor: '#F17105' }}
+                    style={{ backgroundColor: '#61C2A2' }}
                     data-testid="button-configure-quiz"
                   >
                     <Brain className="mr-2 h-5 w-5" />
@@ -202,15 +202,16 @@ export default function UploadPage() {
               <div className="text-center mb-8">
                 <Button
                   onClick={handleBackToUpload}
-                  className="mb-6 text-white bg-orange-600/80 border-orange-700/60 shadow-lg"
+                  className="mb-6 text-white shadow-lg"
+                  style={{ backgroundColor: '#61C2A2', borderColor: '#09224E' }}
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Upload
                 </Button>
-                <h2 className="text-4xl font-bold mb-4" style={{ color: '#dc5817' }}>
+                <h2 className="text-4xl font-bold mb-4" style={{ color: '#09224E' }}>
                   Quiz Configuration
                 </h2>
-                <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>
+                <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#09224E' }}>
                   Customize your quiz with the number of questions and types you want
                 </p>
               </div>
@@ -226,8 +227,8 @@ export default function UploadPage() {
           {generateQuizMutation.isPending && (
             <div className="text-center py-12">
               <div className="inline-flex items-center space-x-3">
-                <div className="animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
-                <span className="text-lg" style={{ color: '#1F2937' }}>Generating quiz with AI...</span>
+                <div className="animate-spin rounded-full h-8 w-8 border-4 border-teal-600 border-t-transparent"></div>
+                <span className="text-lg" style={{ color: '#09224E' }}>Generating quiz with AI...</span>
               </div>
               <p className="text-sm mt-2" style={{ color: '#6B7280' }}>This may take up to 30 seconds</p>
             </div>

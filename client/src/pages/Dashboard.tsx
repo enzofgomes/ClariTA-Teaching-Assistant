@@ -250,12 +250,12 @@ export default function Dashboard() {
     <div 
       className="min-h-screen relative overflow-hidden" 
       style={{ 
-        background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
+        background: 'linear-gradient(135deg, #f8fafc 0%, #BDBFA3 30%, #B6E2D3 70%, #f8fafc 100%)'
       }}
     >
 
       <div className="relative z-10">
-        <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
+        <header className="shadow-sm" style={{ backgroundColor: '#61C2A2' }}>
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               {/* Logo */}
@@ -289,10 +289,10 @@ export default function Dashboard() {
 
         <main className="container mx-auto px-4 py-12">
           <div className="mb-12 text-center">
-            <h2 className="text-5xl font-bold mb-4" style={{ color: '#6b2d16' }}>
-              Welcome back, <span style={{ color: '#dc5817' }}>{user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'Student'}!</span>
+            <h2 className="text-5xl font-bold mb-4" style={{ color: '#09224E' }}>
+              Welcome back, <span style={{ color: '#61C2A2' }}>{user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'Student'}!</span>
             </h2>
-            <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>
+            <p className="text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: '#09224E' }}>
               Upload a new PDF to generate quizzes or view your quiz history. Transform your learning experience with AI-powered assessments!
             </p>
           </div>
@@ -300,10 +300,10 @@ export default function Dashboard() {
         <div className="grid lg:grid-cols-3 gap-8">
             {/* Quick Actions */}
             <div className="lg:col-span-1">
-              <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm hover:shadow-3xl transition-all duration-300 hover:scale-105">
+              <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
                 <CardHeader className="pb-6">
-                  <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#de8318' }}>
+                  <CardTitle className="flex items-center text-2xl" style={{ color: '#09224E' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#09224E' }}>
                       <Plus className="h-5 w-5 text-white" />
                     </div>
                     Quick Actions
@@ -313,12 +313,11 @@ export default function Dashboard() {
                   <Link href="/upload">
                     <Button 
                       className="w-full h-12 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
-                      style={{ backgroundColor: '#F17105' }}
+                      style={{ backgroundColor: '#61C2A2' }}
                       data-testid="button-upload-new"
                     >
                       <Upload className="h-5 w-5 mr-2" />
                       Upload New PDF
-                      <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
                 </CardContent>
@@ -327,8 +326,8 @@ export default function Dashboard() {
               {/* Stats */}
               <Card className="mt-8 border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
                 <CardHeader className="pb-6">
-                  <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#dc5817' }}>
+                  <CardTitle className="flex items-center text-2xl" style={{ color: '#09224E' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#09224E' }}>
                       <BadgePercent className="h-5 w-5 text-white" />
                     </div>
                     Your Statistics
@@ -346,66 +345,72 @@ export default function Dashboard() {
                     <div className="space-y-6">
                       {/* Main Stats Grid */}
                       <div className="grid grid-cols-1 gap-4">
-                        <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                          <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#B6E2D3' }}>
+                          <Calendar className="h-6 w-6 mx-auto mb-2" style={{ color: '#09224E' }} />
+                          <div className="text-2xl font-bold" style={{ color: '#09224E' }}>
                             {userStats.quizzesCompletedThisMonth}
                           </div>
-                          <div className="text-xs text-blue-600 dark:text-blue-400">This Month</div>
+                          <div className="text-xs" style={{ color: '#09224E' }}>This Month</div>
                         </div>
                       </div>
 
                       {/* Streaks */}
                       <div className="space-y-3">
-                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <h4 className="font-medium text-sm flex items-center gap-2" style={{ color: '#09224E' }}>
                           <Zap className="h-4 w-4" />
                           Streaks
                         </h4>
                         <div className="grid grid-cols-2 gap-3">
-                          <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded">
-                            <div className="font-semibold text-orange-600 dark:text-orange-400">
+                          <div className="text-center p-3 rounded" style={{ backgroundColor: '#AFC8C4' }}>
+                            <div className="font-semibold" style={{ color: '#09224E' }}>
                               {userStats.currentStreak}
                             </div>
-                            <div className="text-xs text-orange-600 dark:text-orange-400">Current</div>
+                            <div className="text-xs" style={{ color: '#09224E' }}>Current</div>
                           </div>
-                          <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded">
-                            <div className="font-semibold text-purple-600 dark:text-purple-400">
+                          <div className="text-center p-3 rounded" style={{ backgroundColor: '#CFD6C2' }}>
+                            <div className="font-semibold" style={{ color: '#09224E' }}>
                               {userStats.maxStreak}
                             </div>
-                            <div className="text-xs text-purple-600 dark:text-purple-400">Best</div>
+                            <div className="text-xs" style={{ color: '#09224E' }}>Best</div>
                           </div>
                         </div>
                       </div>
 
                       {/* Performance Metrics */}
                       <div className="space-y-3">
-                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <h4 className="font-medium text-sm flex items-center gap-2" style={{ color: '#09224E' }}>
                           <Award className="h-4 w-4" />
                           Performance
                         </h4>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between items-center">
-                            <span className="text-gray-600 dark:text-gray-400">Accuracy Rate</span>
+                            <span style={{ color: '#09224E' }}>Accuracy Rate</span>
                             <div className="flex items-center gap-2">
-                              <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                              <div className="w-16 rounded-full h-2" style={{ backgroundColor: '#ffffff' }}>
                                 <div 
-                                  className="bg-green-500 h-2 rounded-full" 
-                                  style={{ width: `${Math.min(userStats.accuracyRate, 100)}%` }}
+                                  className="h-2 rounded-full" 
+                                  style={{ 
+                                    backgroundColor: '#61C2A2',
+                                    width: `${Math.min(userStats.accuracyRate, 100)}%` 
+                                  }}
                                 ></div>
                               </div>
-                              <span className="font-medium w-12 text-right">{userStats.accuracyRate}%</span>
+                              <span className="font-medium w-12 text-right" style={{ color: '#09224E' }}>{userStats.accuracyRate}%</span>
                             </div>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-gray-600 dark:text-gray-400">Average Score</span>
+                            <span style={{ color: '#09224E' }}>Average Score</span>
                             <div className="flex items-center gap-2">
-                              <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                              <div className="w-16 rounded-full h-2" style={{ backgroundColor: '#ffffff' }}>
                                 <div 
-                                  className="bg-blue-500 h-2 rounded-full" 
-                                  style={{ width: `${Math.min(userStats.averageScore, 100)}%` }}
+                                  className="h-2 rounded-full" 
+                                  style={{ 
+                                    backgroundColor: '#09224E',
+                                    width: `${Math.min(userStats.averageScore, 100)}%` 
+                                  }}
                                 ></div>
                               </div>
-                              <span className="font-medium w-12 text-right">{userStats.averageScore}%</span>
+                              <span className="font-medium w-12 text-right" style={{ color: '#09224E' }}>{userStats.averageScore}%</span>
                             </div>
                           </div>
                         </div>
@@ -413,31 +418,31 @@ export default function Dashboard() {
 
                       {/* Total Activity */}
                       <div className="space-y-3">
-                        <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <h4 className="font-medium text-sm flex items-center gap-2" style={{ color: '#09224E' }}>
                           <Trophy className="h-4 w-4" />
                           Total Activity
                         </h4>
                         <div className="grid grid-cols-2 gap-3 text-sm">
-                          <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded">
-                            <div className="font-semibold text-indigo-600 dark:text-indigo-400">
+                          <div className="text-center p-3 rounded" style={{ backgroundColor: '#AFC8C4' }}>
+                            <div className="font-semibold" style={{ color: '#09224E' }}>
                               {userStats.totalQuizzesTaken}
                             </div>
-                            <div className="text-xs text-indigo-600 dark:text-indigo-400">Quizzes Taken</div>
+                            <div className="text-xs" style={{ color: '#09224E' }}>Quizzes Taken</div>
                           </div>
-                          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
-                            <div className="font-semibold text-gray-600 dark:text-gray-400">
+                          <div className="text-center p-3 rounded" style={{ backgroundColor: '#CFD6C2' }}>
+                            <div className="font-semibold" style={{ color: '#09224E' }}>
                               {userStats.totalQuizzesGenerated}
                             </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400">Quizzes Generated</div>
+                            <div className="text-xs" style={{ color: '#09224E' }}>Quizzes Generated</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-center py-4 text-gray-500">
-                      <BookOpen className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <div className="text-center py-4" style={{ color: '#09224E' }}>
+                      <BookOpen className="h-8 w-8 mx-auto mb-2" style={{ color: '#09224E' }} />
                       <p>No statistics available yet</p>
-                      <p className="text-xs text-gray-400 mt-1">Complete some quizzes to see your progress</p>
+                      <p className="text-xs mt-1" style={{ color: '#09224E' }}>Complete some quizzes to see your progress</p>
                     </div>
                   )}
                 </CardContent>
@@ -448,13 +453,13 @@ export default function Dashboard() {
             <div className="lg:col-span-2">
               <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
                 <CardHeader className="pb-6">
-                  <CardTitle className="flex items-center text-2xl" style={{ color: '#1F2937' }}>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#6b2d16' }}>
+                  <CardTitle className="flex items-center text-2xl" style={{ color: '#09224E' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: '#09224E' }}>
                       <BookMarked className="h-5 w-5 text-white" />
                     </div>
                     Quiz Management
                   </CardTitle>
-                  <CardDescription className="text-lg" style={{ color: '#1F2937' }}>
+                  <CardDescription className="text-lg" style={{ color: '#09224E' }}>
                     Manage your quizzes with search, filters, and organization tools
                   </CardDescription>
                   
@@ -486,8 +491,8 @@ export default function Dashboard() {
                 <CardContent>
                   {quizzesLoading ? (
                     <div className="text-center py-12">
-                      <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className="text-lg" style={{ color: '#1F2937' }}>Loading quizzes...</p>
+                      <div className="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                      <p className="text-lg" style={{ color: '#09224E' }}>Loading quizzes...</p>
                     </div>
                   ) : filteredQuizzes.length > 0 ? (
                     <div className="space-y-4">
@@ -496,19 +501,19 @@ export default function Dashboard() {
                         return (
                           <div 
                             key={quiz.id} 
-                            className="flex items-center justify-between p-6 border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-105"
+                            className="flex items-center justify-between p-6 border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-102"
                           >
                             <div className="flex items-center space-x-4 flex-1">
-                              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#de8318' }}>
+                              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#61C2A2' }}>
                                 <PencilLine className="h-6 w-6 text-white" />
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
-                                  <h3 className="font-semibold text-lg" style={{ color: '#1F2937' }}>
+                                  <h3 className="font-semibold text-lg" style={{ color: '#09224E' }}>
                                     {quiz.name || `Quiz from ${upload?.fileName || 'Unknown'}`}
                                   </h3>
                                   {quiz.folder && (
-                                    <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 border-orange-200">
+                                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
                                       <Folder className="h-3 w-3 mr-1" />
                                       {quiz.folder}
                                     </Badge>
@@ -524,7 +529,7 @@ export default function Dashboard() {
                                 {quiz.tags && quiz.tags.length > 0 && (
                                   <div className="flex flex-wrap gap-1">
                                     {quiz.tags.map(tag => (
-                                      <Badge key={tag} variant="outline" className="text-xs border-orange-200 text-orange-700">
+                                      <Badge key={tag} variant="outline" className="text-xs border-teal-200 text-teal-700">
                                         <Tag className="h-3 w-3 mr-1" />
                                         {tag}
                                       </Badge>
@@ -538,7 +543,7 @@ export default function Dashboard() {
                                 <Link href={`/quiz-results/${quiz.id}`}>
                                   <Button 
                                     className="h-10 px-4 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
-                                    style={{ backgroundColor: '#dc5817' }}
+                                    style={{ backgroundColor: '#61C2A2' }}
                                   >
                                     View Results
                                   </Button>
@@ -547,7 +552,7 @@ export default function Dashboard() {
                                 <Link href={`/quiz/${quiz.id}`}>
                                   <Button 
                                     className="h-10 px-4 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
-                                    style={{ backgroundColor: '#dc5817' }}
+                                    style={{ backgroundColor: '#61C2A2' }}
                                   >
                                     Take Quiz
                                   </Button>
@@ -559,7 +564,7 @@ export default function Dashboard() {
                                     variant="ghost" 
                                     size="sm"
                                     onClick={() => handleEditQuiz(quiz)}
-                                    className="h-10 w-10 hover:bg-orange-100"
+                                    className="h-10 w-10 hover:bg-teal-100"
                                   >
                                     <Edit className="h-4 w-4" />
                                   </Button>
@@ -607,7 +612,7 @@ export default function Dashboard() {
                                     <Button 
                                       onClick={handleSaveQuiz}
                                       disabled={updateQuizMutation.isPending}
-                                      style={{ backgroundColor: '#dc5817' }}
+                                      style={{ backgroundColor: '#61C2A2' }}
                                     >
                                       {updateQuizMutation.isPending ? "Saving..." : "Save Changes"}
                                     </Button>
@@ -649,10 +654,10 @@ export default function Dashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#f5e2aa' }}>
-                        <Brain className="h-10 w-10" style={{ color: '#6b2d16' }} />
+                      <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#B6E2D3' }}>
+                        <Brain className="h-10 w-10" style={{ color: '#09224E' }} />
                       </div>
-                      <h3 className="text-2xl font-semibold mb-3" style={{ color: '#1F2937' }}>
+                      <h3 className="text-2xl font-semibold mb-3" style={{ color: '#09224E' }}>
                         {searchTerm || selectedFolder !== "all" ? "No quizzes found" : "No quizzes yet"}
                       </h3>
                       <p className="text-lg mb-6" style={{ color: '#6B7280' }}>
@@ -665,7 +670,7 @@ export default function Dashboard() {
                         <Link href="/upload">
                           <Button 
                             className="h-12 px-8 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 rounded-lg"
-                            style={{ backgroundColor: '#F17105' }}
+                            style={{ backgroundColor: '#61C2A2' }}
                           >
                             <Plus className="h-5 w-5 mr-2" />
                             Upload Your First PDF

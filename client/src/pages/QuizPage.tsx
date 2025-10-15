@@ -247,20 +247,20 @@ export default function QuizPage() {
       <div 
         className="min-h-screen relative overflow-hidden" 
         style={{ 
-          background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
+          background: 'linear-gradient(135deg, #B6E2D3 0%, #BDBFA3 50%, #B6E2D3 100%)'
         }}
       >
         {/* Decorative background elements */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-          <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
-          <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
-          <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+          <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#61C2A2' }}></div>
+          <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#09224E' }}></div>
+          <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#BDBFA3' }}></div>
+          <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#61C2A2' }}></div>
         </div>
 
         <div className="relative z-10">
           {/* Header */}
-          <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
+          <header className="shadow-sm" style={{ backgroundColor: '#61C2A2' }}>
             <div className="container mx-auto px-4 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -289,7 +289,7 @@ export default function QuizPage() {
             {/* Results Header */}
             <Card className="p-6 mb-6 border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
               <div className="text-center">
-                <h2 className="text-3xl font-bold mb-2" style={{ color: '#6b2d16' }}>Quiz Complete!</h2>
+                <h2 className="text-3xl font-bold mb-2" style={{ color: '#09224E' }}>Quiz Complete!</h2>
               <div className="flex items-center justify-center space-x-4 mb-4">
                 <div className="text-center">
                   <p className="text-4xl font-bold text-primary">{quizResult.percentage}%</p>
@@ -308,7 +308,10 @@ export default function QuizPage() {
                 >
                   {regenerateQuizMutation.isPending ? "Generating..." : "Retake Quiz"}
                 </Button>
-                <Button onClick={() => window.location.href = "/dashboard"}>
+                <Button 
+                  onClick={() => window.location.href = "/dashboard"}
+                  className="hover:shadow-lg transition-all duration-200"
+                >
                   Back to Dashboard
                 </Button>
               </div>
@@ -373,20 +376,20 @@ export default function QuizPage() {
     <div 
       className="min-h-screen relative overflow-hidden" 
       style={{ 
-        background: 'linear-gradient(135deg, #f5e2aa 0%, #fef7e0 50%, #f5e2aa 100%)'
+        background: 'linear-gradient(135deg, #B6E2D3 0%, #BDBFA3 50%, #B6E2D3 100%)'
       }}
     >
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
-        <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#6b2d16' }}></div>
-        <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#de8318' }}></div>
-        <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#dc5817' }}></div>
+        <div className="absolute top-20 left-10 w-16 h-16 rounded-full" style={{ backgroundColor: '#61C2A2' }}></div>
+        <div className="absolute top-32 right-20 w-12 h-12 rounded-full" style={{ backgroundColor: '#09224E' }}></div>
+        <div className="absolute bottom-20 left-1/4 w-20 h-20 rounded-full" style={{ backgroundColor: '#BDBFA3' }}></div>
+        <div className="absolute bottom-32 right-1/3 w-14 h-14 rounded-full" style={{ backgroundColor: '#61C2A2' }}></div>
       </div>
 
       <div className="relative z-10">
       {/* Header */}
-        <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
+        <header className="shadow-sm" style={{ backgroundColor: '#61C2A2' }}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">

@@ -33,7 +33,7 @@ export default function Header() {
   };
 
   return (
-    <header className="shadow-sm" style={{ backgroundColor: '#de8318' }}>
+    <header className="shadow-sm" style={{ backgroundColor: '#61C2A2' }}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -54,25 +54,25 @@ export default function Header() {
                   <span>About Us</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl" style={{ backgroundColor: '#fef7e0' }}>
+              <DialogContent className="max-w-2xl" style={{ backgroundColor: '#f8fafc' }}>
                 <DialogHeader>
-                  <DialogTitle style={{ color: '#6b2d16' }}>About ClariTA</DialogTitle>
+                  <DialogTitle style={{ color: '#09224E' }}>About ClariTA</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <p style={{ color: '#6b2d16' }}>
+                  <p style={{ color: '#09224E' }}>
                     <strong>ClariTA makes studying easier!</strong> Simply upload your PDF lecture slides and our AI 
                     automatically creates practice quizzes to help you study better.
                   </p>
-                  <p style={{ color: '#6b2d16' }}>
+                  <p style={{ color: '#09224E' }}>
                     <strong>How it works:</strong>
                     <br />1. Upload your PDF lecture slides
                     <br />2. AI reads your content and creates quiz questions
                     <br />3. Take the quiz to test your knowledge
                     <br />4. Get instant feedback to see what you know and what to study more
                   </p>
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: '#f5e2aa' }}>
-                    <h3 className="font-semibold mb-2" style={{ color: '#dc5817' }}>Perfect for Students!</h3>
-                    <p className="text-sm" style={{ color: '#6b2d16' }}>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: '#B6E2D3' }}>
+                    <h3 className="font-semibold mb-2" style={{ color: '#09224E' }}>Perfect for Students!</h3>
+                    <p className="text-sm" style={{ color: '#09224E' }}>
                       Turn any lecture PDF into practice quizzes. Study smarter, not harder! 
                       Great for exam prep and understanding your course material better.
                     </p>
@@ -91,9 +91,9 @@ export default function Header() {
                   <span>The Team</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-4xl" style={{ backgroundColor: '#fef7e0' }}>
+              <DialogContent className="max-w-4xl" style={{ backgroundColor: '#f8fafc' }}>
                 <DialogHeader>
-                  <DialogTitle style={{ color: '#6b2d16' }}>Meet Our Team</DialogTitle>
+                  <DialogTitle style={{ color: '#09224E' }}>Meet Our Team</DialogTitle>
                 </DialogHeader>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {teamMembers.map((member, index) => (
@@ -104,10 +104,10 @@ export default function Header() {
                             <Logo size="sm" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold mb-2" style={{ color: '#6b2d16' }}>
+                            <h3 className="font-semibold mb-2" style={{ color: '#09224E' }}>
                               {member.name}
                             </h3>
-                            <p className="text-sm leading-relaxed" style={{ color: '#6b2d16' }}>
+                            <p className="text-sm leading-relaxed" style={{ color: '#09224E' }}>
                               {member.description}
                             </p>
                           </div>

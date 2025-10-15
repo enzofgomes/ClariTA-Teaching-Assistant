@@ -56,7 +56,7 @@ export default function HomePage() {
       <section 
         className="py-20 relative overflow-hidden"
         style={{ 
-          background: 'linear-gradient(180deg, #f4e4bc 0%, #e8d5a3 30%, #d4c4a8 60%, #c4b59a 100%)'
+          background: 'linear-gradient(180deg, #B6E2D3 0%, #BDBFA3 30%, #61C2A2 60%, #09224E 100%)'
         }}
       >
         {/* Desert Sand Dunes */}
@@ -74,12 +74,12 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ color: '#6b2d16' }}>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ color: '#09224E' }}>
               Transform Your Lecture Slides Into 
-              <span style={{ color: '#dc5817' }}> Interactive Quizzes</span>
+              <span style={{ color: '#61C2A2' }}> Interactive Quizzes</span>
             </h1>
 
-            <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed" style={{ color: '#6b2d16' }}>
+            <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed" style={{ color: '#09224E' }}>
               Upload your PDF lecture slides and instantly generate personalized quizzes powered by AI. 
               Perfect for students, educators, and professionals who want to test their knowledge and enhance their learning experience.
             </p>
@@ -89,7 +89,7 @@ export default function HomePage() {
                 size="lg" 
                 onClick={handleGetStarted}
                 className="text-lg px-8 py-4 text-white hover:opacity-90"
-                style={{ backgroundColor: '#F17105' }}
+                style={{ backgroundColor: '#09224E' }}
               >
                 Give It a Try
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -97,7 +97,7 @@ export default function HomePage() {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="text-lg px-8 py-4 hover:opacity-90 border-orange-300 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
+                className="text-lg px-8 py-4 hover:opacity-90 border-teal-300 text-teal-600 hover:bg-teal-50 hover:text-teal-700"
                 onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Learn More
@@ -107,16 +107,16 @@ export default function HomePage() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: '#dc5817' }}>1000+</div>
-                <div style={{ color: '#6b2d16' }}>Quizzes Generated</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#61C2A2' }}>1000+</div>
+                <div style={{ color: '#09224E' }}>Quizzes Generated</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: '#dc5817' }}>670+</div>
-                <div style={{ color: '#6b2d16' }}>Happy Students</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#61C2A2' }}>670+</div>
+                <div style={{ color: '#09224E' }}>Happy Students</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: '#dc5817' }}>95%</div>
-                <div style={{ color: '#6b2d16' }}>Accuracy Rate</div>
+                <div className="text-3xl font-bold mb-2" style={{ color: '#61C2A2' }}>95%</div>
+                <div style={{ color: '#09224E' }}>Accuracy Rate</div>
               </div>
             </div>
           </div>
@@ -127,19 +127,19 @@ export default function HomePage() {
       <section 
         id="how-it-works" 
         className="py-20 relative"
-        style={{ backgroundColor: '#fef7e0' }}
+        style={{ backgroundColor: '#f8fafc' }}
       >
         {/* Subtle pattern */}
         <div className="absolute top-0 right-0 w-64 h-64 opacity-5">
-          <div className="w-full h-full bg-gradient-to-br from-transparent via-orange-200/20 to-transparent rounded-full"></div>
+          <div className="w-full h-full bg-gradient-to-br from-transparent via-teal-200/20 to-transparent rounded-full"></div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: '#6b2d16' }}>
+            <h2 className="text-4xl font-bold mb-4" style={{ color: '#09224E' }}>
               How It Works
             </h2>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#6b2d16' }}>
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#09224E' }}>
               Follow these simple steps to turn your lecture slides into practice quizzes!
             </p>
           </div>
@@ -149,23 +149,23 @@ export default function HomePage() {
               <div key={index} className="relative">
                 {/* Timeline connector line */}
                 {index < timelineSteps.length - 1 && (
-                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 z-0" style={{ backgroundColor: '#dc5817' }}></div>
+                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 z-0" style={{ backgroundColor: '#61C2A2' }}></div>
                 )}
                 
                 <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-105 relative z-10">
                   <CardHeader>
                     <div className="relative">
-                      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: index % 3 === 0 ? '#de8318' : index % 3 === 1 ? '#dc5817' : '#6b2d16' }}>
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: index % 3 === 0 ? '#61C2A2' : index % 3 === 1 ? '#61C2A2' : '#09224E' }}>
                         <step.icon className="h-8 w-8 text-white" />
                       </div>
-                      <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: '#dc5817' }}>
+                      <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: '#09224E' }}>
                         {step.step}
                       </div>
                     </div>
-                    <CardTitle className="text-xl" style={{ color: '#6b2d16' }}>{step.title}</CardTitle>
+                    <CardTitle className="text-xl" style={{ color: '#09224E' }}>{step.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription style={{ color: '#6b2d16' }}>
+                    <CardDescription style={{ color: '#09224E' }}>
                       {step.description}
                     </CardDescription>
                   </CardContent>
@@ -179,15 +179,15 @@ export default function HomePage() {
       {/* Benefits Section with Warm Cream Background */}
       <section 
         className="py-20 relative"
-        style={{ backgroundColor: '#fef7e0' }}
+        style={{ backgroundColor: '#f8fafc' }}
       >
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: '#dc5817' }}>
+            <h2 className="text-4xl font-bold mb-4" style={{ color: '#61C2A2' }}>
               Why Choose ClariTA?
             </h2>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#6b2d16' }}>
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#09224E' }}>
               Experience the future of personalized learning with our cutting-edge AI technology!
             </p>
           </div>
@@ -197,14 +197,14 @@ export default function HomePage() {
               <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-105">
                 <CardContent className="p-8">
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#de8318' }}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#61C2A2' }}>
                       <benefit.icon className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-3" style={{ color: '#6b2d16' }}>
+                      <h3 className="text-xl font-semibold mb-3" style={{ color: '#09224E' }}>
                         {benefit.title}
                       </h3>
-                      <p className="leading-relaxed" style={{ color: '#6b2d16' }}>
+                      <p className="leading-relaxed" style={{ color: '#09224E' }}>
                         {benefit.description}
                       </p>
                     </div>
@@ -220,7 +220,7 @@ export default function HomePage() {
       <section 
         className="py-20 relative overflow-hidden"
         style={{ 
-          background: 'linear-gradient(135deg, #fef7e0 0%, #f0d4a0 50%, #fef7e0 100%)'
+          background: 'linear-gradient(135deg, #B6E2D3 0%, #BDBFA3 50%, #B6E2D3 100%)'
         }}
       >
         {/* Subtle pattern overlay */}
@@ -230,10 +230,10 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: '#6b2d16' }}>
+            <h2 className="text-4xl font-bold mb-4" style={{ color: '#09224E' }}>
               Ready to Transform Your Learning?
             </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: '#6b2d16' }}>
+            <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: '#09224E' }}>
               Join thousands of students and educators who are already using ClariTA to enhance their learning experience! 
               Start generating quizzes from your lecture slides today!
             </p>
@@ -241,7 +241,7 @@ export default function HomePage() {
               size="lg" 
               onClick={handleGetStarted}
               className="text-lg px-8 py-4 text-white hover:opacity-90 transition-all duration-300 hover:scale-105"
-              style={{ backgroundColor: '#de8318' }}
+              style={{ backgroundColor: '#61C2A2' }}
             >
               Get Started Free!
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -253,7 +253,7 @@ export default function HomePage() {
       {/* Footer with Warm Orange and Educational Shapes */}
       <footer 
         className="relative overflow-hidden"
-        style={{ backgroundColor: '#de8318' }}
+        style={{ backgroundColor: '#61C2A2' }}
       >
 
         <div className="container mx-auto px-4 py-8 relative z-10">

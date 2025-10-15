@@ -30,7 +30,7 @@ export function QuizCard({
       case 'tf':
         return { label: 'T/F', color: 'bg-purple-100 text-purple-800' };
       case 'fill':
-        return { label: 'Fill', color: 'bg-orange-100 text-orange-800' };
+        return { label: 'Fill', color: 'bg-teal-100 text-teal-800' };
       default:
         return { label: 'Unknown', color: 'bg-gray-100 text-gray-800' };
     }
@@ -87,7 +87,7 @@ export function QuizCard({
                 <RadioGroupItem 
                   value={index.toString()} 
                   id={`${question.id}-${index}`}
-                  className="border-orange-600 text-orange-600 data-[state=checked]:border-orange-600 data-[state=checked]:text-orange-600"
+                  className="border-teal-600 text-teal-600 data-[state=checked]:border-teal-600 data-[state=checked]:text-teal-600"
                 />
                 <Label htmlFor={`${question.id}-${index}`} className="flex-1 cursor-pointer">
                   {option}

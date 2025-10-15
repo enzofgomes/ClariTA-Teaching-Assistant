@@ -70,28 +70,28 @@ export function Uploader({ onUploadSuccess }: UploaderProps) {
     <div
       {...getRootProps()}
       className={`drag-zone border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${
-        isDragOver ? 'border-orange-400 bg-orange-50' : 'border-orange-200'
+        isDragOver ? 'border-teal-400 bg-teal-50' : 'border-teal-200'
       } ${uploadMutation.isPending ? 'opacity-50 pointer-events-none' : ''}`}
-      style={{ backgroundColor: '#fef7e0' }}
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
       data-testid="upload-zone"
     >
       <input {...getInputProps()} data-testid="input-file" />
       
       <div className="flex flex-col items-center space-y-4">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: '#f5e2aa' }}>
-          <CloudUpload className="h-8 w-8" style={{ color: '#6b2d16' }} />
+        <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: '#09224E' }}>
+          <CloudUpload className="h-8 w-8" style={{ color: '#FFFFFF' }} />
         </div>
         
         <div>
-          <p className="text-2xl font-bold mb-2" style={{ color: '#6b2d16' }}>
+          <p className="text-2xl font-bold mb-2" style={{ color: '#09224E' }}>
             {uploadMutation.isPending ? "Uploading..." : "Drop your PDF here"}
           </p>
-          <p className="text-lg" style={{ color: '#6b2d16' }}>
+          <p className="text-lg" style={{ color: '#09224E' }}>
             or{" "}
             <Button
               variant="link"
               className="p-0 h-auto"
-              style={{ color: '#dc5817' }}
+              style={{ color: '#09224E' }}
               onClick={open}
               disabled={uploadMutation.isPending}
               data-testid="button-browse"
@@ -101,14 +101,14 @@ export function Uploader({ onUploadSuccess }: UploaderProps) {
           </p>
         </div>
         
-        <p className="text-xs" style={{ color: '#6b2d16' }}>
+        <p className="text-xs" style={{ color: '#09224E' }}>
           Maximum file size: 20MB • PDF format only
         </p>
       </div>
       
       {uploadMutation.isPending && (
         <div className="mt-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 mx-auto" style={{ borderColor: '#dc5817' }}></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 mx-auto" style={{ borderColor: '#61C2A2' }}></div>
         </div>
       )}
     </div>
