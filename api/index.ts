@@ -36,16 +36,26 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  await registerRoutes(app);
+let isInitialized = false;
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+async function initializeApp() {
+  if (!isInitialized) {
+    await registerRoutes(app);
 
-    res.status(status).json({ message });
-    console.error(err);
-  });
-})();
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-export default app;
+      res.status(status).json({ message });
+      console.error(err);
+    });
+
+    isInitialized = true;
+  }
+}
+
+// Vercel serverless function handler
+export default async (req: Request, res: Response) => {
+  await initializeApp();
+  return app(req, res);
+};
