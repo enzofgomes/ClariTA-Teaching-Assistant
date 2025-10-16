@@ -231,27 +231,144 @@ npm run test:coverage
 - **Integration Tests**: API endpoint testing
 - **E2E Tests**: Full user workflow testing
 
-## Deployment
+## 🚀 Deployment
 
-### Production Build
+### Deploying to Render (Recommended)
+
+ClariTA is configured for easy deployment on Render. Follow these steps:
+
+#### 1. Prerequisites
+- GitHub repository with your code
+- Supabase project (for database and auth)
+- Google Gemini API key
+
+#### 2. Deploy to Render
+
+**Option A: Using the Dashboard (Recommended)**
+
+1. **Push your code to GitHub**
+   ```bash
+   git add .
+   git commit -m "Prepare for deployment"
+   git push origin main
+   ```
+
+2. **Connect to Render**
+   - Go to [render.com](https://render.com) and sign up/login
+   - Click **"New +"** → **"Web Service"**
+   - Connect your GitHub repository
+   - Render will auto-detect the `render.yaml` configuration
+
+3. **Configure Environment Variables**
+   In the Render dashboard, add these environment variables:
+   ```
+   SUPABASE_URL=https://your-project-id.supabase.co
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+
+4. **Deploy**
+   - Click **"Create Web Service"**
+   - Render will automatically build and deploy your app
+   - Your app will be live at: `https://your-app-name.onrender.com`
+
+**Option B: Using Render Blueprint (render.yaml)**
+
+1. The `render.yaml` file is already configured in your project root
+2. Go to [Render Dashboard](https://dashboard.render.com)
+3. Click **"New +"** → **"Blueprint"**
+4. Connect your repository
+5. Render will use the `render.yaml` configuration automatically
+
+#### 3. Post-Deployment Setup
+
+**Update Supabase Redirect URLs**
+1. Go to your Supabase project: **Authentication** → **URL Configuration**
+2. Add your Render URL to **Site URL** and **Redirect URLs**:
+   ```
+   https://your-app-name.onrender.com
+   ```
+
+**Update CORS Settings (if needed)**
+1. In Supabase, go to **Settings** → **API**
+2. Ensure your Render URL is allowed in CORS settings
+
+#### 4. Monitoring & Logs
+
+- **View Logs**: Render Dashboard → Your Service → Logs
+- **Health Checks**: Render automatically monitors your app's health
+- **Auto-Deploy**: Enable auto-deploy for automatic updates on git push
+
+---
+
+### Local Production Build
+
+To test the production build locally before deploying:
+
 ```bash
+# Build the application
 npm run build
+
+# Set environment variables
+export NODE_ENV=production
+export SUPABASE_URL=your_supabase_url
+export SUPABASE_ANON_KEY=your_supabase_anon_key
+export SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+export GEMINI_API_KEY=your_gemini_api_key
+
+# Start the production server
+npm start
 ```
 
-### Environment Variables (Production)
-```env
-NODE_ENV=production
-SUPABASE_URL=your_production_supabase_url
-SUPABASE_ANON_KEY=your_production_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_production_supabase_service_role_key
-GEMINI_API_KEY=your_production_gemini_api_key
-```
+---
 
-### Deployment Options
-- **Vercel**: Recommended for full-stack deployment
-- **Netlify**: Frontend deployment with serverless functions
-- **Railway**: Full-stack deployment with database
-- **Docker**: Containerized deployment
+### Alternative Deployment Options
+
+| Platform | Best For | Setup Difficulty | Cost |
+|----------|----------|------------------|------|
+| **Render** | Full-stack apps (Recommended) | ⭐ Easy | Free tier available |
+| **Railway** | Full-stack apps with DB | ⭐ Easy | $5 credits/month |
+| **Fly.io** | Global deployment | ⭐⭐ Medium | Limited free tier |
+| **DigitalOcean** | Production apps | ⭐⭐ Medium | Starting at $5/month |
+| **AWS/GCP** | Enterprise scale | ⭐⭐⭐ Hard | Pay-as-you-go |
+
+---
+
+### Environment Variables Reference
+
+| Variable | Description | Where to Get |
+|----------|-------------|--------------|
+| `NODE_ENV` | Environment mode | Set to `production` |
+| `PORT` | Server port | Auto-set by Render (10000) |
+| `SUPABASE_URL` | Supabase project URL | [Supabase Dashboard](https://app.supabase.com) → Settings → API |
+| `SUPABASE_ANON_KEY` | Public anon key | Supabase Dashboard → Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (secret) | Supabase Dashboard → Settings → API |
+| `GEMINI_API_KEY` | Google Gemini API key | [Google AI Studio](https://makersuite.google.com/app/apikey) |
+
+---
+
+### Troubleshooting Deployment
+
+**Build Fails**
+- Check that all dependencies are in `package.json` (not devDependencies if needed for build)
+- Verify Node.js version (18+)
+- Check build logs in Render dashboard
+
+**App Won't Start**
+- Verify all environment variables are set correctly
+- Check that PORT is not hardcoded (use `process.env.PORT`)
+- Review server logs in Render dashboard
+
+**Database Connection Issues**
+- Verify Supabase credentials are correct
+- Check Supabase project is not paused
+- Ensure IP whitelist includes Render IPs (usually 0.0.0.0/0 for Supabase)
+
+**Authentication Not Working**
+- Update Supabase redirect URLs to include your Render URL
+- Clear browser cache and cookies
+- Check CORS settings in Supabase
 
 ## Contributing
 

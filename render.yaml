@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: clarita-teaching-assistant
+    runtime: node
+    env: node
+    region: oregon # Change to your preferred region
+    plan: free # Change to 'starter' or higher for production
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SUPABASE_URL
+        sync: false # Set this in Render dashboard
+      - key: SUPABASE_ANON_KEY
+        sync: false # Set this in Render dashboard
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false # Set this in Render dashboard
+      - key: GEMINI_API_KEY
+        sync: false # Set this in Render dashboard
+
