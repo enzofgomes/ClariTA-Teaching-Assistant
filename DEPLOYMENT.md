@@ -258,6 +258,15 @@ To update environment variables without redeployment:
   - Clear browser cookies and cache
   - Check CORS settings in Supabase
 
+**Error**: "Network error during registration"
+- **Cause**: API endpoint connection issues
+- **Solution**:
+  - This is usually caused by incorrect API URLs
+  - Ensure the latest code is deployed (should use relative URLs like `/api/auth/signup`)
+  - Check Render logs for backend errors
+  - Verify environment variables are set correctly
+  - Clear browser cache and try again
+
 ### Slow First Load (Free Tier)
 
 **Issue**: App takes 30+ seconds to load initially

@@ -62,9 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserDetails = async (authUser: User) => {
     try {
-      const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
-      
-      const response = await fetch(`${API_URL}/auth/me`, {
+      const response = await fetch('/api/auth/me', {
         headers: {
           'Authorization': `Bearer ${session?.access_token}`,
           'Content-Type': 'application/json',
@@ -105,8 +103,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
-      const url = `${API_URL}/auth/signup`;
+      const url = '/api/auth/signup';
       
       console.log('Signup request to:', url);
       console.log('Request body:', { email, password, fullName });
