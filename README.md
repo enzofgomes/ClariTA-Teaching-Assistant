@@ -319,7 +319,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<div align="center">
-  <p>Made with ❤️ by the ClariTA Team</p>
-  <p>Transforming education with AI! 🦊</p>
-</div>

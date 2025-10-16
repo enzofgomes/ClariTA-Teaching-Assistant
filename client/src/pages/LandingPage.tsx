@@ -263,7 +263,6 @@ export default function HomePage() {
               <span className="text-lg font-semibold">ClariTA</span>
             </div>
             <p>&copy; 2025 ClariTA. Transforming education with AI!</p>
-            <p className="text-sm mt-2">Made with ❤️ by Enzo, Angelica, Fabianne, and Veronica</p>
           </div>
         </div>
       </footer>

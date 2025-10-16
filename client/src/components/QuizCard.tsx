@@ -108,7 +108,7 @@ export function QuizCard({
               <RadioGroupItem 
                 value="true" 
                 id={`${question.id}-true`}
-                className="border-orange-600 text-orange-600 data-[state=checked]:border-orange-600 data-[state=checked]:text-orange-600"
+                className="border-teal-600 text-teal-600 data-[state=checked]:border-teal-600 data-[state=checked]:text-teal-600"
               />
               <Label htmlFor={`${question.id}-true`} className="flex-1 cursor-pointer">True</Label>
             </div>
@@ -116,7 +116,7 @@ export function QuizCard({
               <RadioGroupItem 
                 value="false" 
                 id={`${question.id}-false`}
-                className="border-orange-600 text-orange-600 data-[state=checked]:border-orange-600 data-[state=checked]:text-orange-600"
+                className="border-teal-600 text-teal-600 data-[state=checked]:border-teal-600 data-[state=checked]:text-teal-600"
               />
               <Label htmlFor={`${question.id}-false`} className="flex-1 cursor-pointer">False</Label>
             </div>

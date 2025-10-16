@@ -9,8 +9,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { FileText, Brain, Plus, LogOut, User, Search, Edit, Trash2, Folder, Tag, MoreHorizontal, TrendingUp, Target, BarChart3, BadgePercent, Calendar, CheckCircle, Zap, Award, Trophy, BookOpen, Sparkles, ArrowRight, Upload, Lightbulb, GraduationCap, PencilLine, BookMarked } from "lucide-react";
+import { FileText, Brain, Plus, LogOut, User, Search, Edit, Trash2, Folder, Tag, MoreHorizontal, TrendingUp, Target, BarChart3, BadgePercent, Calendar, CheckCircle, Zap, Award, Trophy, BookOpen, Sparkles, ArrowRight, Upload, Lightbulb, GraduationCap, PencilLine, BookMarked, Bug } from "lucide-react";
 import Logo from "@/components/Logo";
+import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { useToast } from "@/hooks/use-toast";
 import { authenticatedFetch } from "@/lib/api";
 import { useEffect, useState, useMemo } from "react";
@@ -273,6 +274,16 @@ export default function Dashboard() {
                     </span>
                   </div>
                 )}
+                <FeedbackDialog>
+                  <Button 
+                    variant="outline"
+                    className="text-white bg-white/20 border-white/30 hover:bg-white/30 hover:text-white"
+                    data-testid="button-feedback"
+                  >
+                    <Bug className="h-4 w-4 mr-2" />
+                    Found an issue?
+                  </Button>
+                </FeedbackDialog>
                 <Button 
                   variant="outline" 
                   onClick={handleLogout}
@@ -501,44 +512,42 @@ export default function Dashboard() {
                         return (
                           <div 
                             key={quiz.id} 
-                            className="flex items-center justify-between p-6 border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-102"
+                            className="flex flex-col sm:flex-row sm:items-start items-center p-6 border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 hover:scale-102 gap-4"
                           >
-                            <div className="flex items-center space-x-4 flex-1">
-                              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#61C2A2' }}>
-                                <PencilLine className="h-6 w-6 text-white" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <h3 className="font-semibold text-lg" style={{ color: '#09224E' }}>
-                                    {quiz.name || `Quiz from ${upload?.fileName || 'Unknown'}`}
-                                  </h3>
-                                  {quiz.folder && (
-                                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
-                                      <Folder className="h-3 w-3 mr-1" />
-                                      {quiz.folder}
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2 text-sm mb-2" style={{ color: '#6B7280' }}>
-                                  <span>From: {upload?.fileName}</span>
-                                  <span>•</span>
-                                  <span>{Object.values(quiz.meta.countsByType).reduce((a, b) => a + b, 0)} questions</span>
-                                  <span>•</span>
-                                  <span>Created {new Date(quiz.createdAt).toLocaleDateString()}</span>
-                                </div>
-                                {quiz.tags && quiz.tags.length > 0 && (
-                                  <div className="flex flex-wrap gap-1">
-                                    {quiz.tags.map(tag => (
-                                      <Badge key={tag} variant="outline" className="text-xs border-teal-200 text-teal-700">
-                                        <Tag className="h-3 w-3 mr-1" />
-                                        {tag}
-                                      </Badge>
-                                    ))}
-                                  </div>
+                            <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#61C2A2' }}>
+                              <PencilLine className="h-6 w-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                <h3 className="font-semibold text-lg truncate" style={{ color: '#09224E' }}>
+                                  {quiz.name || `Quiz from ${upload?.fileName || 'Unknown'}`}
+                                </h3>
+                                {quiz.folder && (
+                                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200 flex-shrink-0">
+                                    <Folder className="h-3 w-3 mr-1" />
+                                    {quiz.folder}
+                                  </Badge>
                                 )}
                               </div>
+                              <div className="flex items-center gap-2 text-sm mb-2 flex-wrap" style={{ color: '#6B7280' }}>
+                                <span className="truncate">From: {upload?.fileName}</span>
+                                <span className="flex-shrink-0">•</span>
+                                <span className="flex-shrink-0">{Object.values(quiz.meta.countsByType).reduce((a, b) => a + b, 0)} questions</span>
+                                <span className="flex-shrink-0">•</span>
+                                <span className="flex-shrink-0">Created {new Date(quiz.createdAt).toLocaleDateString()}</span>
+                              </div>
+                              {quiz.tags && quiz.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {quiz.tags.map(tag => (
+                                    <Badge key={tag} variant="outline" className="text-xs border-teal-200 text-teal-700">
+                                      <Tag className="h-3 w-3 mr-1" />
+                                      {tag}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-2 flex-shrink-0 w-full sm:w-auto justify-center sm:justify-start">
                               {quiz.hasAttempts ? (
                                 <Link href={`/quiz-results/${quiz.id}`}>
                                   <Button 

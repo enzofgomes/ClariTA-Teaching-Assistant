@@ -60,7 +60,7 @@ export default function Header() {
                 </DialogHeader>
                 <div className="space-y-4">
                   <p style={{ color: '#09224E' }}>
-                    ClariTA is a small personal project aimed to make studying more dynamic. It was built by a student for students that strugle. I hope you enjoy the platform and it helps you study better.
+                    ClariTA is a small personal project aimed to make studying more dynamic. It was built by a student for students that struggle. I hope you enjoy the platform and it helps you study better.
                   </p>
                   <p style={{ color: '#09224E' }}>
                     <strong>How it works:</strong>
