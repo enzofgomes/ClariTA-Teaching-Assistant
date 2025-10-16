@@ -1,17 +1,6 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.ts"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/dist/public/$1"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  },
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist/public",
   "functions": {
     "api/index.ts": {
       "maxDuration": 30
