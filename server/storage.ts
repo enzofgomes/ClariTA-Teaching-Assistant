@@ -3,7 +3,12 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { uploads, quizzes, users, quizAttempts, type Upload, type Quiz, type InsertUpload, type InsertQuiz, type UpdateQuiz, type InsertQuizAttempt, type QuizAttempt, type User, type UpsertUser } from "@shared/schema";
 
-const client = postgres(process.env.DATABASE_URL!);
+// Configure postgres client for serverless environments
+const client = postgres(process.env.DATABASE_URL!, {
+  max: 1, // Limit connections in serverless environment
+  idle_timeout: 20,
+  connect_timeout: 10,
+});
 const db = drizzle(client);
 
 export interface IStorage {
