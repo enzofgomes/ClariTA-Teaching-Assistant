@@ -34,15 +34,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) {
-        fetchUserDetails(session.user);
-      } else {
+    // Get initial session with timeout
+    const initAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Supabase auth error:', error);
+          setLoading(false);
+          return;
+        }
+        
+        setSession(session);
+        if (session?.user) {
+          await fetchUserDetails(session.user);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Failed to initialize auth:', error);
         setLoading(false);
       }
-    });
+    };
+
+    // Set a timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      console.error('Auth initialization timed out');
+      setLoading(false);
+    }, 5000); // 5 second timeout
+
+    initAuth().finally(() => clearTimeout(timeout));
 
     // Listen for auth changes
     const {
@@ -57,7 +78,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchUserDetails = async (authUser: User) => {

@@ -1,5 +1,21 @@
 # Vercel Deployment Fixes - Summary
 
+## 🚨 STUCK ON "Loading..."? READ THIS FIRST!
+
+If your Vercel deployment shows "Loading..." forever, you're missing the **VITE_** prefixed environment variables!
+
+**Quick Fix:**
+1. Go to Vercel Dashboard → Your Project → Settings → Environment Variables
+2. Add these TWO variables:
+   - `VITE_SUPABASE_URL` = `https://your-project.supabase.co`
+   - `VITE_SUPABASE_ANON_KEY` = `your-anon-key-here`
+3. Go to Deployments → Click "..." on latest deployment → "Redeploy"
+4. Open browser console (F12) to see error messages
+
+**Why?** Vite requires the `VITE_` prefix to expose env variables to the browser. Without them, the Supabase client fails to initialize and your app gets stuck.
+
+---
+
 ## Changes Made to Make Your App Vercel-Ready
 
 ### 1. **api/index.ts** - Fixed Serverless Function Handler
@@ -43,13 +59,20 @@
 
 Go to your Vercel project → **Settings** → **Environment Variables** and add:
 
-### Build-Time Variables (Required)
+### ⚠️ CRITICAL: Client-Side Variables (Must have VITE_ prefix!)
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+**These are REQUIRED for the app to load! Without them, you'll see "Loading..." forever.**
+
+### Server-Side Build-Time Variables
 ```
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 ```
 
-### Runtime Variables (Required)
+### Runtime Variables (Required for API)
 ```
 DATABASE_URL=postgresql://user:password@host:5432/database
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
@@ -62,7 +85,10 @@ NODE_ENV=production
 SESSION_SECRET=random-secret-string
 ```
 
-**Important**: Add these for all environments (Production, Preview, Development)
+**Important**: 
+- Add ALL variables for all environments (Production, Preview, Development)
+- The `VITE_` prefixed variables are exposed to the browser - this is normal and safe for Supabase public keys
+- After adding variables, you MUST redeploy (Vercel doesn't auto-redeploy on env changes)
 
 ## Deployment Steps
 
