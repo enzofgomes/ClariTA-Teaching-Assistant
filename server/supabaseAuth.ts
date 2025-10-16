@@ -25,10 +25,8 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
-  const sessionSecret = process.env.SESSION_SECRET || 'fallback-secret-for-serverless';
-  
   return session({
-    secret: sessionSecret,
+    secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -55,12 +53,7 @@ async function upsertUser(user: { id: string; email?: string; user_metadata?: { 
 
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
-  
-  // Only use session middleware if not in serverless environment
-  // Sessions don't work well in Vercel serverless
-  if (process.env.SESSION_SECRET) {
-    app.use(getSession());
-  }
+  app.use(getSession());
 
   // Auth routes
   app.post("/api/auth/signup", async (req, res) => {
@@ -85,7 +78,10 @@ export async function setupAuth(app: Express) {
         await upsertUser(data.user);
       }
 
-      // No session storage needed - Supabase handles sessions on client side
+      // Store user session
+      (req.session as any).userId = data.user?.id;
+      (req.session as any).user = data.user;
+
       res.json({ user: data.user });
     } catch (error) {
       console.error('Signup error:', error);
@@ -122,14 +118,12 @@ export async function setupAuth(app: Express) {
     try {
       const { error } = await supabase.auth.signOut();
       
-      // Clear session if it exists (for non-serverless environments)
-      if (req.session && typeof req.session.destroy === 'function') {
-        req.session.destroy((err) => {
-          if (err) {
-            console.error('Session destroy error:', err);
-          }
-        });
-      }
+      // Clear session
+      req.session.destroy((err) => {
+        if (err) {
+          console.error('Session destroy error:', err);
+        }
+      });
 
       if (error) {
         return res.status(400).json({ error: error.message });
