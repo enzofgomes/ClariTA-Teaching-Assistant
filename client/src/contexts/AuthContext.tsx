@@ -62,15 +62,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserDetails = async (authUser: User) => {
     try {
-      // Use relative path in production, localhost in development
-      const API_URL = import.meta.env?.VITE_API_URL || (import.meta.env?.PROD ? '/api' : 'http://localhost:5000/api');
-      
-      // Get the current session to ensure we have the latest token
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
       
       const response = await fetch(`${API_URL}/auth/me`, {
         headers: {
-          'Authorization': `Bearer ${currentSession?.access_token}`,
+          'Authorization': `Bearer ${session?.access_token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -109,13 +105,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      // Use relative path in production, localhost in development
-      const API_URL = import.meta.env?.VITE_API_URL || (import.meta.env?.PROD ? '/api' : 'http://localhost:5000/api');
+      const API_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
       const url = `${API_URL}/auth/signup`;
       
       console.log('Signup request to:', url);
-      console.log('Environment PROD:', import.meta.env?.PROD);
-      console.log('Request body:', { email, fullName });
+      console.log('Request body:', { email, password, fullName });
       
       const response = await fetch(url, {
         method: 'POST',
@@ -133,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Signup response ok:', response.ok);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Registration failed' }));
+        const errorData = await response.json();
         console.log('Signup error data:', errorData);
         return { error: new Error(errorData.error || 'Registration failed') };
       }
@@ -156,7 +150,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return { error: null };
     } catch (error) {
       console.error('Registration error:', error);
-      return { error: new Error(`Network error during registration: ${error instanceof Error ? error.message : 'Unknown error'}`) };
+      return { error: new Error('Network error during registration') };
     }
   };
 
