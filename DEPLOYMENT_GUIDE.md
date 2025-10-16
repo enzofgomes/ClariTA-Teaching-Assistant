@@ -16,15 +16,19 @@ You'll need to set these in your Vercel dashboard:
 # Database
 DATABASE_URL=your_neon_database_url
 
-# Supabase
+# Supabase (Required for build and runtime)
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
-# Session
+# Session (Optional for serverless, but recommended for local dev)
 SESSION_SECRET=your_random_session_secret
 
 # Google AI (for quiz generation)
-GOOGLE_AI_API_KEY=your_google_ai_api_key
+GEMINI_API_KEY=your_gemini_api_key
+
+# Node Environment
+NODE_ENV=production
 ```
 
 ### 2. Deploy to Vercel
@@ -53,10 +57,13 @@ vercel --prod
 ### 3. Configure Build Settings
 
 In Vercel dashboard:
-- **Framework Preset**: Other
-- **Build Command**: `npm run vercel-build`
+- **Framework Preset**: Vite
+- **Build Command**: `npm run vercel-build` (auto-detected)
 - **Output Directory**: `dist/public`
-- **Install Command**: `npm install`
+- **Install Command**: `npm install` (auto-detected)
+- **Node Version**: 18.x or higher
+
+**Important**: The `vercel.json` file in the root handles routing and serverless function configuration automatically.
 
 ### 4. Set Environment Variables
 
@@ -97,9 +104,24 @@ In your Vercel project settings:
 ### Common Issues
 
 1. **Build Failures**: Check environment variables are set correctly
-2. **API Errors**: Verify database connection and API keys
-3. **File Upload Issues**: Check file size limits and storage configuration
-4. **Session Issues**: Consider using external session storage
+   - Ensure `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set (required for build)
+   - Check build logs in Vercel dashboard
+
+2. **API Errors / 404 on API Routes**: 
+   - Verify all environment variables are set in Vercel (especially `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`)
+   - Check function logs in Vercel dashboard
+   - Test the health endpoint: `https://your-app.vercel.app/api/health`
+   - Make sure `vercel.json` is committed to git
+
+3. **"Network error during registration" or "Failed to fetch"**:
+   - Check browser console for actual error messages
+   - Verify API routes are working: `https://your-app.vercel.app/api/health`
+   - Ensure CORS is properly configured (already handled in `api/index.ts`)
+   - Check Vercel function logs for backend errors
+
+4. **File Upload Issues**: Check file size limits and storage configuration
+
+5. **Session Issues**: Sessions are optional for serverless; auth is handled by Supabase
 
 ### Performance Optimization
 
