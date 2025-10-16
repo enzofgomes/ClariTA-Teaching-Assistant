@@ -80,12 +80,7 @@ var insertQuizAttemptSchema = createInsertSchema(quizAttempts).omit({
 });
 
 // server/storage.ts
-var client = postgres(process.env.DATABASE_URL, {
-  max: 1,
-  // Limit connections in serverless environment
-  idle_timeout: 20,
-  connect_timeout: 10
-});
+var client = postgres(process.env.DATABASE_URL);
 var db = drizzle(client);
 var DatabaseStorage = class {
   async getUser(id) {
@@ -460,9 +455,8 @@ var supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
 });
 function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1e3;
-  const sessionSecret = process.env.SESSION_SECRET || "fallback-secret-for-serverless";
   return session({
-    secret: sessionSecret,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -486,9 +480,7 @@ async function upsertUser(user) {
 }
 async function setupAuth(app2) {
   app2.set("trust proxy", 1);
-  if (process.env.SESSION_SECRET) {
-    app2.use(getSession());
-  }
+  app2.use(getSession());
   app2.post("/api/auth/signup", async (req, res) => {
     try {
       const { email, password, fullName } = req.body;
@@ -507,6 +499,8 @@ async function setupAuth(app2) {
       if (data.user) {
         await upsertUser(data.user);
       }
+      req.session.userId = data.user?.id;
+      req.session.user = data.user;
       res.json({ user: data.user });
     } catch (error) {
       console.error("Signup error:", error);
@@ -535,13 +529,11 @@ async function setupAuth(app2) {
   app2.post("/api/auth/signout", async (req, res) => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (req.session && typeof req.session.destroy === "function") {
-        req.session.destroy((err) => {
-          if (err) {
-            console.error("Session destroy error:", err);
-          }
-        });
-      }
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Session destroy error:", err);
+        }
+      });
       if (error) {
         return res.status(400).json({ error: error.message });
       }

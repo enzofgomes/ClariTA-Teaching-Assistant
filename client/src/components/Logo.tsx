@@ -19,6 +19,15 @@ const Logo: React.FC<LogoProps> = ({ size = 'md', className = '' }) => {
     setImageError(true);
   };
 
+  if (imageError) {
+    // Fallback: Simple fox emoji or text
+    return (
+      <div className={`${sizeClasses[size]} ${className} flex items-center justify-center bg-teal-500 rounded text-white font-bold`}>
+        🦊
+      </div>
+    );
+  }
+
   return (
     <div className={`${sizeClasses[size]} ${className}`}>
       <img
