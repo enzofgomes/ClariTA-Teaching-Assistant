@@ -400,14 +400,6 @@ We welcome contributions! Please follow these steps:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Team
-
-**ClariTA Development Team**
-- **Enzo** - BS Information Technology | FIU | First Time Hacker
-- **Angelica** - [Role and background]
-- **Fabianne** - [Role and background]  
-- **Veronica** - [Role and background]
-
 ## Acknowledgments
 
 - **Supabase** for authentication and database services
