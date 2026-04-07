@@ -1,4 +1,4 @@
-# 🦊 ClariTA - AI-Powered Teaching Assistant
+# ClariTA - AI-Powered Teaching Assistant
 
 > Transform your learning experience with AI-generated quizzes from PDF lecture slides
 
@@ -7,11 +7,11 @@
 [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-43853D?logo=node.js&logoColor=white)](https://nodejs.org/)
 
-## 📖 Overview
+## Overview
 
 ClariTA is an innovative AI-powered teaching assistant that automatically generates interactive quizzes from PDF lecture slides. Built with modern web technologies, it provides educators and students with a seamless way to create, take, and review assessments.
 
-### ✨ Key Features
+### Key Features
 
 - **PDF Upload & Processing**: Upload lecture slides and extract content automatically
 - **AI Quiz Generation**: Generate multiple question types (MCQ, True/False, Fill-in-the-blank)
@@ -150,7 +150,7 @@ CREATE TABLE quiz_attempts (
 - **Hover Effects**: Smooth transitions and elevation changes
 - **Responsive Grid**: Adaptive layouts for all screen sizes
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ClariTA-Teaching-Assistant/
@@ -185,7 +185,7 @@ ClariTA-Teaching-Assistant/
             └── fox-logo.png
 ```
 
-## 🔧 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/auth/signup` - User registration
